@@ -1,42 +1,49 @@
-\section{Identifying Trips In Number Plate Data}
+\section{Identifying trips in number plate data}
 
+Trip data, identified from number plate data, has the potential to unlock a number of new applications for plate scanned data. In this section we are concerned with the methodology that allow us to group multiple camera observations of the same vehicle into one or several trips performed by that vehicle.
 
+The \emph{ith} sighting of vehicle \emph{k} can be defined as a tuple pair:
 
-\subsection{Definitions}
-
-The \emph{ith} sighting of vehicle \emph{k} can be defined as:
-
-\begin{equation} \label{e2.1.1}
-s^{k}_{i} = \left(camera, time\right)
+\begin{equation} \label{e.sighting}
+s^{k}_{i} = \left(c, t\right)
 \end{equation}
 
-Trip
-\begin{equation} \label{e2.1.2}
-trip^{k}_{u} = \left(s^{k}_{(1)}, s^{k}_{(2)}, \dots , s^{k}_{(n)}\right)
+where \emph{c} is an integer that uniquely identifies a camera, and \emph{t} is a scalar representing a point in time (e.g.\ a timestamp).
+
+An ordered sequence of sightings of vehicle \emph{k} defines the \emph{uth} trip, or journey, of \emph{k}:
+
+\begin{equation} \label{e.trip}
+w^{k}_{u} = \left(s^{k}_{(1)}, s^{k}_{(2)}, \dots , s^{k}_{(n)}\right)
 \end{equation}
 
-where \( n \) is the number of sightings, i.e.\ length of the trip.
+where \( n \) is the number of sightings, i.e.\ length of the trip. A trip of \emph{k} is valid if the following conditions are met:
 
-Trips by the same vehicle can be distinguished
+\begin{eqnarray}
+n &\ge& 1 , \\ \label{e.trip.constraints.1}
+t_{(i)}^{k} - t_{(i-1)}^{k} &>& \tau \label{e.trip.constraints.2}
+\end{eqnarray}
 
-From the \( uth \) trip of vehicle \( k \), we can calculate the corresponding journey time sequence, of length \(n-1\):
+Condition \ref{e.trip.constraints.1} is straightforward and tells us that every trip should have at least one sighting. The second condition \ref{e.trip.constraints.1} states that every two consecutive sightings in a trip should occur within a maximum time interval $\tau$. It's purpose is to differentiate trips made by the same vehicle and is essentially defining a maximum travel time between each observation. Evidently, this condition only makes sense for trips of length 2 or greater. From the \( uth \) trip of vehicle \( k \), we can calculate the corresponding journey time sequence, of length \(n-1\):
 
-\begin{equation} \label{e2.1.3}
-journey\ time^{k}_{u} = \left(time^{k}_{2} - time^{k}_{1}, \ldots, time^{k}_{n} - time^{k}_{n-1} \right)
+\begin{equation} \label{e.journeytime}
+jt^{k}_{u} = \left(t^{k}_{2} - t^{k}_{1}, \ldots, t^{k}_{n} - t^{k}_{n-1} \right)
 \end{equation}
 
-A trip of length \( \ge 2 \) is valid if all partial journey times are lower than a threshold \( \tau \):
+We can therefore re-write constraint~\ref{e.trip.constraints.2} as:
 
-\begin{equation} \label{e2.1.4}
-journey\ time^{k}_{u(i)} < \tau \ , \ \forall i \in journey\ time^{k}_{u}
+\begin{equation} \label{e.valid.trip.jt}
+jt^{k}_{u(i)} < \tau \ , \ \forall i \in jt^{k}_{u(i)}
 \end{equation}
 
-Realistically there should also be a lower bound for each journey time.
+However, realistically, there should also be a lower bound for each travel time, which would help identify unplausible trips in the database (vehicles travelling long distances in very short amounts of time), that may be caused by innacurate plate scans or vehicles travelling with cloned plate numbers.
 
-Clock Synchronisation
+\subsection{Choosing $\tau$}
 
-\subsection{Considerations}
+\subsection{Errors in plate scanning}
 
+\subsection{Duplicate scannings}
+
+\subsection{Clock synchronisation}
 
 
 % \begin{Definition}{\rm We describe the two methods in \S 1.2. In \S\ 1.3. we
