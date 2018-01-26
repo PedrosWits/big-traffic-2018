@@ -1,6 +1,6 @@
 \section{Identifying trips in number plate data}
 
-Trip data, identified from number plate data, has the potential to unlock a number of new applications for plate scanned data. In this section we are concerned with the methodology that allow us to group multiple camera observations of the same vehicle into one or several trips performed by that vehicle.
+Trip data, identified from number plate data, has the potential to unlock a number of new applications for urban traffic monitoring and control. In this section we are concerned with the methodology that allows multiple camera observations of the same vehicle to be grouped into one or several trips of that vehicle.
 
 The \emph{ith} sighting of vehicle \emph{k} can be defined as a tuple pair:
 
@@ -16,28 +16,38 @@ An ordered sequence of sightings of vehicle \emph{k} defines the \emph{uth} trip
 w^{k}_{u} = \left(s^{k}_{(1)}, s^{k}_{(2)}, \dots , s^{k}_{(n)}\right)
 \end{equation}
 
-where \( n \) is the number of sightings, i.e.\ length of the trip. A trip of \emph{k} is valid if the following conditions are met:
-
-\begin{eqnarray}
-n &\ge& 1 , \\ \label{e.trip.constraints.1}
-t_{(i)}^{k} - t_{(i-1)}^{k} &>& \tau \label{e.trip.constraints.2}
-\end{eqnarray}
-
-Condition \ref{e.trip.constraints.1} is straightforward and tells us that every trip should have at least one sighting. The second condition \ref{e.trip.constraints.1} states that every two consecutive sightings in a trip should occur within a maximum time interval $\tau$. It's purpose is to differentiate trips made by the same vehicle and is essentially defining a maximum travel time between each observation. Evidently, this condition only makes sense for trips of length 2 or greater. From the \( uth \) trip of vehicle \( k \), we can calculate the corresponding journey time sequence, of length \(n-1\):
+where \( n \) is the number of sightings, i.e.\ length of the trip. Moreover, for a given trip, we can calculate the corresponding journey time sequence, of length \(n-1\):
 
 \begin{equation} \label{e.journeytime}
 jt^{k}_{u} = \left(t^{k}_{2} - t^{k}_{1}, \ldots, t^{k}_{n} - t^{k}_{n-1} \right)
 \end{equation}
 
-We can therefore re-write constraint~\ref{e.trip.constraints.2} as:
+We consider a trip of \emph{k} valid if the following conditions are met:
 
-\begin{equation} \label{e.valid.trip.jt}
-jt^{k}_{u(i)} < \tau \ , \ \forall i \in jt^{k}_{u(i)}
-\end{equation}
+\begin{align}
+n &\ge 1 , \label{e.trip.constraints.1} \\
+\tau_{(i)} &< jt^{k}_{u(i)} < \Tau_{(i)} \ , \ \forall i \in jt^{k}_{u(i)} \label{e.trip.constraints.2}
+%\tau_{(i)} &>& 0
+%\tau &<& t_{(i)}^{k} - t_{(i-1)}^{k} < \Tau \label{e.trip.constraints.2}
+\end{align}
 
-However, realistically, there should also be a lower bound for each travel time, which would help identify unplausible trips in the database (vehicles travelling long distances in very short amounts of time), that may be caused by innacurate plate scans or vehicles travelling with cloned plate numbers.
+The first condition~\ref{e.trip.constraints.1} is straightforward and specifies that every trip should have at least one sighting. The second condition~\ref{e.trip.constraints.2} defines a minimum and maximum travel times between consecutive observations. Its purpose is twofold:
+\begin{enumerate*}[label=(\roman*)]
+  \item first, to allow trips made by the same vehicle to be differentiated. Given two sightings of \emph{k}, one occurring now and another 6 hours ago, we can interpret them as belonging to different trips of \emph{k};%every two consecutive sightings in a trip should occur within a maximum time interval $\Tau$. This allows trips made by the same vehicle to be differentiate.
+  \item second, it allows unplausible trips to be identified. An unplausible trip can result from observing \emph{k} at a given camera and then a few seconds later at a second camera, several miles apart. Two explanations are common, either one of the cameras made a detection error, or there is another vehicle with a cloned plate number travelling in the road network.
+\end{enumerate*}
 
-\subsection{Choosing $\tau$}
+Evidently, condition~\ref{e.trip.constraints.2} is only valid for trips of length 2 or greater. Furthermore,
+
+How to estimate the values of $\Tau$ and $\tau$ remains
+
+% This would help identify unplausible trips that otherwise resulted from vehicles travelling long distances in very short amounts of time, but that were instead caused by innacurate plate scans or vehicles with cloned plate numbers.
+%
+% We can re-write constraint~\ref{e.trip.constraints.2} using the definition of journey time:
+%
+% \begin{equation} \label{e.valid.trip.jt}
+%
+% \end{equation}
 
 \subsection{Errors in plate scanning}
 
