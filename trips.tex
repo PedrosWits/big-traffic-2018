@@ -35,10 +35,28 @@ The first condition~\ref{e.trip.constraints.1} is straightforward and specifies 
   \item second, it allows unplausible trips to be identified. For example, an unplausible trip can result from observing \emph{k} at a given camera and then a few seconds later at a second camera, several miles apart. Two explanations are common, either one of the cameras made a detection error, or there is another vehicle with a cloned plate number travelling in the road network.
 \end{enumerate*} Evidently, condition~\ref{e.trip.constraints.2} is only valid for trips of length two or greater.
 
+Furthermore, if we consider all valid trips of vehicle \emph{k}:
 
-Furthermore, condition ~\ref{e.trip.constraints.1} implies that no two sightings in a trip can be the values of $\tau$ and $\Tau$
+\begin{align}
+W^{k} = \left( w^{k}_{(1)}, w^{k}_{(2)}, \ldots, w^{k}_{(N)} \right) \label{e.trip.history}
+\end{align}
 
-How to estimate the values of $\Tau$ and $\tau$ remains
+where \emph{N} is the number of trips of \emph{k}, then there should be no two trips containing the same sighting:
+
+\begin{align}
+s^{k}_{(u(i))} \neq s^{k}_{(v(j))}, \forall u,v &= 1, 2, \ldots, N \ , \ u \neq v,  \label{e.trip.history.constraint} \\
+\forall i,j &= 1, 2, \ldots, n \ , \ i \neq j \nonumber
+\end{align}
+
+where, we consider two sightings of vehicle \emph{k} to be different simply if they were observed at two different points in time:
+
+\begin{equation} \label{e.sighting}
+t^{k}_{i} \ne t^{k}_{j} \Rightarrow s^{k}_{i} \ne s^{k}_{j} \ , \ i \ne j
+\end{equation}
+
+When identifying trips from GPS traces, . It is easy to see that both $\tau$ and $\Tau$ should be functions of the
+
+but, how to estimate the values of $\Tau$ and $\tau$ remains a. For the rest of this work, we will consider these parameters to be fixed.
 
 \subsection{Errors in plate scanning}
 
