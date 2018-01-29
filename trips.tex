@@ -1,4 +1,5 @@
-\section{Identifying trips in number plate data}
+% !TEX root = paper.tex
+\section{Trip identification}
 
 Trip data, identified from number plate data, has the potential to unlock a number of new applications for urban traffic monitoring and control. In this section we are concerned with the methodology for grouping multiple camera observations of the same vehicle into one or several trips of that vehicle.
 
@@ -35,7 +36,7 @@ The first condition~\ref{e.trip.constraints.1} is straightforward and specifies 
   \item second, it allows unplausible trips to be identified. For example, an unplausible trip can result from observing \emph{k} at a given camera and then a few seconds later at a second camera, several miles apart. Two explanations are common, either one of the cameras made a detection error, or there is another vehicle with a cloned plate number travelling in the road network.
 \end{enumerate*} Evidently, condition~\ref{e.trip.constraints.2} is only valid for trips of length two or greater.
 
-Furthermore, if we consider all valid trips of vehicle \emph{k}:
+Additionally, if we consider all valid trips of vehicle \emph{k}:
 
 \begin{align}
 W^{k} = \left( w^{k}_{(1)}, w^{k}_{(2)}, \ldots, w^{k}_{(N)} \right) \label{e.trip.history}
@@ -48,13 +49,13 @@ s^{k}_{(u(i))} \neq s^{k}_{(v(j))}, \forall u,v &= 1, 2, \ldots, N \ , \ u \neq 
 \forall i,j &= 1, 2, \ldots, n \ , \ i \neq j \nonumber
 \end{align}
 
-where, we consider two sightings of vehicle \emph{k} to be different simply if they were observed at two different points in time:
+where two sightings of vehicle \emph{k} are different simply if they were observed at two different points in time:
 
-\begin{equation} \label{e.sighting}
+\begin{equation} \label{e.sighting.different}
 t^{k}_{i} \ne t^{k}_{j} \Rightarrow s^{k}_{i} \ne s^{k}_{j} \ , \ i \ne j
 \end{equation}
 
-When identifying trips from GPS traces, . It is easy to see that both $\tau$ and $\Tau$ should be functions of the
+It is easy to see that both $\tau$ and $\Tau$ should be functions of the
 
 but, how to estimate the values of $\Tau$ and $\tau$ remains a. For the rest of this work, we will consider these parameters to be fixed.
 
