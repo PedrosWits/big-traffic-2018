@@ -59,6 +59,11 @@
 \usepackage{parskip}
 \usepackage[inline]{enumitem}
 \usepackage{amsmath}
+\usepackage{multicol}
+\usepackage[many]{tcolorbox}
+\usepackage{makecell}
+\usepackage{booktabs}
+\usepackage{graphicx}
 
 \newcommand{\Tau}{\mathrm{T}}
 
@@ -109,6 +114,8 @@ paper, outlining the purposes and goals I am trying to address.\end{abstract}
 
 \input{intro.tex}
 
+\input{dataset.tex}
+
 \input{trips.tex}
 
 \input{classification.tex}
@@ -117,17 +124,24 @@ paper, outlining the purposes and goals I am trying to address.\end{abstract}
 
 \begin{thebibliography}{99}
 
-\bibitem{SurveyITS2011}
-Zhang, Junping, et al. {\em Data-driven intelligent transportation systems: A survey}. IEEE Transactions on Intelligent Transportation Systems 12.4 (2011): 1624-1639.
-
-\bibitem{EvolutionUTMC2013}
-Hamilton, Andrew, et al. {\em The evolution of urban traffic control: changing policy and technology}. Transportation planning and technology 36.1 (2013): 24-43.
+\bibitem{Castillo2010}
+Castillo, Enrique, et al. {\em Optimal use of plate-scanning resources for route flow estimation in traffic networks}. IEEE Transactions on Intelligent Transportation Systems 11.2 (2010): 380-391.
 
 \bibitem{Castillo2008}
 Castillo, Enrique, José María Menéndez, and Pilar Jiménez. {\em Trip matrix and path flow reconstruction and estimation based on plate scanning and link observations}. Transportation Research Part B: Methodological 42.5 (2008): 455-481.
 
+\bibitem{EvolutionUTMC2013}
+Hamilton, Andrew, et al. {\em The evolution of urban traffic control: changing policy and technology}. Transportation planning and technology 36.1 (2013): 24-43.
+
 \bibitem{Hazelton2012}
 Parry, Katharina, and Martin L. Hazelton. {\em Estimation of origin-–destination matrices from link counts and sporadic routing data}. Transportation Research Part B: Methodological 46.1 (2012): 175-188.
+
+\bibitem{SurveyITS2011}
+Zhang, Junping, et al. {\em Data-driven intelligent transportation systems: A survey}. IEEE Transactions on Intelligent Transportation Systems 12.4 (2011): 1624-1639.
+
+\bibitem{ShortestPath?2015}
+Zhu, Shanjiang, and David Levinson. {\em Do people use the shortest path? An empirical test of Wardrop’s first principle}. PloS one 10.8 (2015): e0134322.
+
 
 % \bibitem{BANKSMITH}
 % R.~E. Bank and R.~K. Smith, {\em General sparse elimination requires no
