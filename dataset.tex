@@ -1,8 +1,6 @@
 % !TEX root = paper.tex
 \section{Tyne and Wear ANPR Data}\label{s.ncl}
 
-Automatic number plate recognition (ANPR) cameras are actively employed in urban traffic environments and play an important role in day-to-day intelligent transportation systems. They can be used by government subsidised entities in urban traffic management and control; by comissioned highway agencies in electronic toll collection; or by law enforcement organisations in detecting speeding vehicles and validating number plate registrations. The wide diversity of applications, paired with the large improvements in price-to-performance ratios of ANPR hardware and software systems, has resulted in increased investments of ANPR cameras for urban environments~\cite{EvolutionUTMC2013, SurveyITS2011}.
-
 \begin{figure}[t]
 \centering
 \includegraphics[width=.95\linewidth]{ANPR-overview.pdf}
@@ -10,7 +8,7 @@ Automatic number plate recognition (ANPR) cameras are actively employed in urban
 \label{fig:anpr-overview}
 \end{figure}
 
-In the region of Tyne and Wear, United Kingdom, there are over 250 active ANPR cameras. This network of cameras records over 1 million license plate detections every day. Figure~\ref{fig:time-series} shows how the number of sightings fluctuates over a single month (February, 2017). Furtheremore, scans made by these cameras are stored in a central database by the Urban Traffic Management and Control (UTMC) of Tyne and Wear and are then used to compute travel times across particular links of interest in the road network. These are usually major roads that see high volumes of traffic, or road segments more prone to traffic jams. Average journey times can then be conveyed back to the drivers by the way of Variable Message Signs (VMS) or web based applications. Figure~\ref{fig:anpr-overview} represents this interaction.
+Automatic number plate recognition (ANPR) cameras are actively employed in urban traffic environments and play an important role in day-to-day intelligent transportation systems. They can be used by government subsidised entities in urban traffic management and control; by comissioned highway agencies in electronic toll collection; or by law enforcement organisations in detecting speeding vehicles and validating number plate registrations. The wide diversity of applications, paired with the large improvements in price-to-performance ratios of ANPR hardware and software systems, has resulted in increased investments of ANPR cameras for urban environments~\cite{EvolutionUTMC2013, SurveyITS2011}.
 
 \begin{figure*}[t]
 \centering
@@ -29,3 +27,38 @@ In the region of Tyne and Wear, United Kingdom, there are over 250 active ANPR c
 \caption{License plate scans recorded by ANPR cameras during February 2017, in the region of Tyne and Wear, United Kingdom.}
 \label{fig:time-series}
 \end{figure*}
+
+In the region of Tyne and Wear, United Kingdom, there are over 250 active ANPR cameras. Over 1 million license plate detections are recorded by these cameras every day. Figure~\ref{fig:time-series} shows the number of daily scans recorded over a month (February, 2017). Furthermore, every scan is stored in a central database managed by the Urban Traffic Management and Control (UTMC) of Tyne and Wear, and used to compute travel times across particular links of interest in the road network. These are usually major roads that see high volumes of traffic, or road segments more prone to traffic jams. Average journey times can then be conveyed back to the drivers by the way of Variable Message Signs (VMS) or web based applications. Figure~\ref{fig:anpr-overview} represents this interaction.
+
+Number plate data, in its essence, is a stream of events, each representing a vehicle observed by one camera at a specific point in time. An excerpt of the data can be found in table~\ref{t:np_data_example}. All plate numbers were anonymised by the UTMC through a hashing algorithm before the data was shared. Cameras are uniquely identified by an integer and timestamps are relative to each camera's clock. However, the cameras are connected through a private network which provides clock synchronisation using the Network Time Protocol (NTP). Therefore, the timestamps can be used directly if the synchronisation error is negligible. The following additional information is also captured and provided by each camera:
+\begin{enumerate*}[label=(\roman*)]
+  \item the clock synchronisation error (milliseconds);
+  \item the camera's confidence that the identified number plate is the true number plate (percentage);
+  \item the direction of travel, away or towards the camera.
+\end{enumerate*}
+The confidence in the observation is especially useful as it helps diagnosing license plate recognition errors. On the other hand, the direction of travel is dependent upon the orientation of the camera, which is not provided. Hence, we chose to ignore the latter in this work, and aim to explore this information in future works.
+
+\begin{table}[ht]
+\centering
+\tabcolsep=0.17cm
+\small
+\begin{tabular}{c c c c c}
+  \hline
+  Vehicle & Camera & Timestamp & \thead{Clock \\Error} & Confidence \\
+  \hline
+  169239 & 1031 & 1454284800.26 &   0 & 100 \\
+  12862943 & 18 & 1454284800.97 &   8 &  61 \\
+  16243894 & 22 & 1454284801.46 &   6 &  86 \\
+  4817789 & 52 & 1454284803.43 &  13 &  94 \\
+  5503486 & 110 & 1454284802.19 &  22 &  91 \\
+  15244177 & 115 & 1454284802.83 &  18 &  87 \\
+  6756787 & 146 & 1454284801.53 &  22 &  99 \\
+  8487265 & 2 & 1454284803.88 &  10 &  93 \\
+   \hline
+\end{tabular}
+\caption{Sample of number plate data. Clock error is given in milliseconds and confidence as a percentual value.}
+\label{t:np_data_example}
+\vspace{-0.5cm}
+\end{table}
+
+The main use of ANPR data for the UTMC is average journey time estimation for selected links in the road network. Furthermore, several authors have extensively researched how to use used number plate data as an extension on link counts for estimating origin-destination matrices and link flows~\cite{Castillo2010, Castillo2008, Hazelton2012}. However, very few works have focused on analysing individual or collective travel patterns from number plate data, particularly across extended periods of time. Moreover, there is no consistent conceptual and analytical framework for transforming number plate data into a historical sequence of trips for each vehicle. Finally, we believe that trip data, properly identified from number plate data, has the potential to unlock a number of new applications for urban traffic control and law enforcement. Thus, in the following section we present a conceptual methodology for grouping multiple camera observations of the same vehicle into one or several trips of that vehicle.
