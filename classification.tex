@@ -18,10 +18,9 @@
 \label{t:features}
 \end{table*}
 
-One direct application of trip data is unsupervised learning. Previous works have focused on clustering trips in order to identify travel modes or purpose of trip ~\cite{Clustering}. Estimating a distribution of trip mode travel, is one of the fundamental steps in traffic modelling . In this work we focus on identifying groups of vehicles with similar trip patterns based on frequency and diversity of travel. For instance, taxis usually .
+One direct application of trip data is unsupervised learning. Previous works have focused on identifying travel modes or purpose of trip from different sources of data, most notably: survey data, GPS data and mobile phone data~\cite{ODMobileData, ClusteringGPS}. Determining the distribution of travel modes is one of the fundamental steps in the four-stage model: an essential traffic modelling methodology for transportation planning~\cite{FourStepModel}. Although number plate data has been used in~\cite{Clustering}, to identify different categories of trips, these do not differentiate between private or public travel modes and focus for the most part on when the trips occurred. Therefore, we aim to identify groups of vehicles with similar trip patterns based on frequency and diversity of travel. This can be private vehicles, such as work-home commuters, transit vehicles like buses and taxis, or other types of vehicles such as delivery trucks.
 %This in turn, may enable trip modes to be estimated
-However, due to its tiny coverage of the road network, it is not clear if ANPR data can capture the travel characteristics that describe the several groups. Thus, we aim with this work to evaluate how good ANPR data is for providing trip information and ultimately that of the underlyng road network. In the remaining of this section we provide detail on the choice of parameters and filtering methods used in trip identification, as well as in the choice of features. Then, we
-
+However, due to its tiny coverage of the road network, it is not clear how well ANPR data can capture much the travel characteristics necessary to accurately describe the different groups.
 
 Due to distinct traffic behavior during weekends, we chose to consider only trips occurring during weekdays. We thus used all number plate data collected during between the 6th and 24th of February and excluded data from the 2 weekends in between. Furthermore, as mentioned in section~\ref{s.trips}, we used fixed empirical values for $\Tau$, mostly due to time constraints. As such, we ran the trip identification sequence for the following values of $\Tau$: $[5 , 7.5, 10, 15, 20, 30]$ minutes. The total number of trips identified during the 3 weeks, for each threshold, was approximately [1.36M, 1.24M, 1.17M, 1.08M, 1.03M, 0.97M] respectively. Moreover, we did not set a value for $\tau$, but instead handled unplausible trips by filtering all sightings with confidence below 85\%. Duplicates were filtered after identifying consecutive sightings by the same camera occurring within the same trip. Clock synchronisation errors were provided in milliseconds with none exceeding 5 seconds. These were therefore ignored.
 
@@ -32,20 +31,14 @@ Transforming trips into features that could be used in clustering algorithms was
   \item Finaly, daily information per vehicle was collapsed into a single row by averaging this information across the 15 days.
 \end{enumerate}
 
-Table~/ref{t:features} depicts a sample of the resulting features vector. Each  The aim was to choose features that captured different aspects of trip frequency and diversity. However, because a high percentage of trips contain a single sighting. 1034107 vehicles
+Table~/ref{t:features} depicts a sample of the resulting features vector. A total of 1034107 distinct vehicles were detected. However, because a high percentage of trips contains a single sighting, some of these features were highly correlated. We therefore, chose to remove 3 of the features represented in~/ref{t:features}: \emph{Average Sightings}, \emph{Average Distinct Routes} and \emph{Average Hour Difference}, to avoid the obfuscation of the natural clustering ~\cite{Kmeans}. Furthermore we considered that a trip of length 1 has no destination (which explains values of average distinct destination below zero) and we filtered all instances of vehicles where the total number of trips is lower than 3, resulting in 642006 unique vehicles.
 
-We identified correlated features and removed the following features .. because ..
-
-Filtered all cases where TotalTrips <= 3. (HOW MANY?)
+Clustering of vehicles was performed using the Hartigan and Wong k-means algorithm, for each value of $\Tau$. The number of clusters \emph{k} was varied between 2 and 8 and executed with 200 maximum iterations and 100 different starts of the algorithm. The Calinski-Harabasz criterion is used to pick the best value of $k$, the one that minimises the whithin-cluster and between-cluster errors and provides the more natural clusters ~/cite{Kmeans}. The results of vehicle clustering are presented and discussed in the section below.
 
 
-
-We ran the kmeans algorithm:
- k = 2:8
- iter.max = 200,
- runs = 100
 
 \section{Results and Discussion}\label{s.results}
+
 
 
 \begin{table}[ht]
@@ -83,6 +76,23 @@ We ran the kmeans algorithm:
   7 & 666 & 331.50 & 26.43 & 1.57 & 9.31 & 5.17 & 5.73 & 19.59 & 13.14 \\
    \hline
 \end{tabular}
-\caption{Clusters sizes and mean centers for $\Tau = 7.5$ minutes}
+\caption{Clusters sizes and mean centers for $\Tau = 7.5$ minutes. Averages are daily based.}
 \label{t:kmeans_centers_450}
+\end{table*}
+
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{c c c c c c c c c c}
+  \hline
+ Cluster &  Size & \thead{Total\\Trips} & \thead{Average\\Trips} & \thead{Average\\Length} & \thead{Average\\Distinct\\Origins} & \thead{Average\\Distinct\\Destinations} & \thead{Average\\First\\Hour} & \thead{Average\\Last\\Hour} & \thead{Average\\Rest\\Time} \\
+  \hline
+  1 & 371318 & 7.19 & 1.76 & 1.68 & 1.68 & 0.71 & 12.30 & 14.55 & 2.14 \\
+    2 & 49852 & 44.85 & 3.73 & 1.90 & 3.16 & 1.73 & 8.98 & 17.02 & 7.76 \\
+    3 & 189224 & 22.82 & 2.29 & 1.84 & 2.11 & 1.06 & 10.00 & 15.76 & 5.60 \\
+    4 & 4593 & 114.34 & 9.12 & 2.30 & 5.92 & 3.98 & 6.93 & 18.21 & 10.43 \\
+   \hline
+\end{tabular}
+\caption{Clusters sizes and mean centers for $\Tau = 20$ minutes. Averages are daily based.}
+\label{t:kmeans_centers_900}
 \end{table*}
