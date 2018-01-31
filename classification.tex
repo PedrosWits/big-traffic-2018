@@ -1,214 +1,88 @@
 % !TEX root = paper.tex
 \section{Clustering vehicles}\label{s.classification}
 
-One of the most straightfoward applications of trip data is unsupervised learning. Clustering trips to identify
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{c c c c c c c c c c c}
+  \hline
+ \thead{Total\\Trips} & \thead{Average\\Trips} & \thead{Average\\Length} & \thead{Average\\Sightings} & \thead{Average\\Distinct\\Origins} & \thead{Average\\Distinct\\Destinations} & \thead{Average\\Distinct\\Routes} & \thead{Average\\First\\Hour} & \thead{Average\\Last\\Hour} & \thead{Average\\Hour\\Difference} & \thead{Average\\Rest\\Time} \\
+  \hline
+41 & 3.42 & 1.25 & 5.75 & 2.75 & 1.00 & 3.00 & 15.33 & 19.25 & 3.80 & 3.70 \\
+3 & 1.50 & 1.00 & 1.50 & 1.50 & 0.00 & 1.50 & 14.00 & 14.50 & 0.73 & 0.73 \\
+7 & 2.33 & 1.33 & 3.33 & 2.33 & 0.67 & 2.33 & 11.00 & 13.00 & 2.44 & 2.41 \\
+12 & 2.40 & 1.10 & 3.60 & 2.40 & 0.60 & 2.40 & 14.40 & 16.40 & 2.00 & 1.95 \\
+   \hline
+\end{tabular}
+\caption{Sample of extracted features from trips taken from 15 weekdays of number plate data.}
+\label{t:features}
+\end{table*}
 
-Usou se os seguintes thresholds ...
+One direct application of trip data is unsupervised learning. Previous works have focused on clustering trips in order to identify travel modes or purpose of trip ~\cite{Clustering}. Estimating a distribution of trip mode travel, is one of the fundamental steps in traffic modelling . In this work we focus on identifying groups of vehicles with similar trip patterns based on frequency and diversity of travel. For instance, taxis usually .
+%This in turn, may enable trip modes to be estimated
+However, due to its tiny coverage of the road network, it is not clear if ANPR data can capture the travel characteristics that describe the several groups. Thus, we aim with this work to evaluate how good ANPR data is for providing trip information and ultimately that of the underlyng road network. In the remaining of this section we provide detail on the choice of parameters and filtering methods used in trip identification, as well as in the choice of features. Then, we
 
-Filtrou-se todos os confidence blabla..
 
-Filtrou-se duplicates desta forma
+Due to distinct traffic behavior during weekends, we chose to consider only trips occurring during weekdays. We thus used all number plate data collected during between the 6th and 24th of February and excluded data from the 2 weekends in between. Furthermore, as mentioned in section~\ref{s.trips}, we used fixed empirical values for $\Tau$, mostly due to time constraints. As such, we ran the trip identification sequence for the following values of $\Tau$: $[5 , 7.5, 10, 15, 20, 30]$ minutes. The total number of trips identified during the 3 weeks, for each threshold, was approximately [1.36M, 1.24M, 1.17M, 1.08M, 1.03M, 0.97M] respectively. Moreover, we did not set a value for $\tau$, but instead handled unplausible trips by filtering all sightings with confidence below 85\%. Duplicates were filtered after identifying consecutive sightings by the same camera occurring within the same trip. Clock synchronisation errors were provided in milliseconds with none exceeding 5 seconds. These were therefore ignored.
 
-Ignorou-se TimestampError porque..
+Transforming trips into features that could be used in clustering algorithms was a 3-step process:
+\begin{enumerate}
+  \item First, every trip was summarised as a single row of data. The following information was extracted: length of trip, origin, destination, route, start and end times.
+  \item Second, daily trip information was obtained for each vehicle: number of trips, median of trip lengths, number of sightings, distinct number of origins destinations, and routes, hour of first sighting, hour of last sighting and total rest time between trips.
+  \item Finaly, daily information per vehicle was collapsed into a single row by averaging this information across the 15 days.
+\end{enumerate}
 
-Calculou-se as seguintes features
+Table~/ref{t:features} depicts a sample of the resulting features vector. Each  The aim was to choose features that captured different aspects of trip frequency and diversity. However, because a high percentage of trips contain a single sighting. 1034107 vehicles
 
-TABELA de features exemplo
+We identified correlated features and removed the following features .. because ..
 
-Correlation between features.. we removed three features because of that
+Filtered all cases where TotalTrips <= 3. (HOW MANY?)
 
-\section{Evaluation}\label{s.results}
 
-TABELA de MEANS para o best k e best (ou baseline) threshold?
 
-TABELA DE DIFERENCAS para o best k entre o baseline threshold e os outros thresholds
+We ran the kmeans algorithm:
+ k = 2:8
+ iter.max = 200,
+ runs = 100
 
-TABELA de RESULTADOS POR k (e por threshold ou average dos thresholds?), para determinar o melhor k
+\section{Results and Discussion}\label{s.results}
 
-INTERPRETACAO DE RESULTADOS
 
-\clearpage
+\begin{table}[ht]
+\centering
+\begin{tabular}{c c c c c}
+  \hline
+\thead{Tau\\(min)} & Best k & Betweenss & Whithinss & \thead{Calinski-\\Harabasz} \\
+  \hline
+5 &   8 & 0.92 & 0.09 & 1,116,962 \\
+  7.5 &   7 & 0.90 & 0.10 & 1,003,744 \\
+  10 &   7 & 0.90 & 0.18 &   911,044 \\
+  15 &   6 & 0.86 & 0.19 &   794,557 \\
+  20 &   4 & 0.79 & 0.19 &   754,241 \\
+  30 &   3 & 0.71 & 0.30 &   743,001 \\
+   \hline
+\end{tabular}
+\caption{Kmeans performance comparison for each best k }
+\label{t:tau_comparison}
+\end{table}
+
 
 \begin{table*}[t]
 \centering
-\begin{tabular}{rrrrrrr}
+\small
+\begin{tabular}{c c c c c c c c c c}
   \hline
- k & t300 & t450 & t600 & t900 & t1200 & t1800 \\
+ Cluster &  Size & \thead{Total\\Trips} & \thead{Average\\Trips} & \thead{Average\\Length} & \thead{Average\\Distinct\\Origins} & \thead{Average\\Distinct\\Destinations} & \thead{Average\\First\\Hour} & \thead{Average\\Last\\Hour} & \thead{Average\\Rest\\Time} \\
   \hline
-1 & 0.00 & 0.00 & 0.00 & 0.00 & 0.00 & 0.00 \\
-  2 & 543907.35 & 534453.24 & 534706.04 & 561666.18 & 618943.98 & 737557.49 \\
-  3 & 822985.63 & 789214.80 & 760759.14 & 723082.06 & 719393.29 & 743001.88 \\
-  4 & 913945.86 & 876675.37 & 838741.42 & 781306.76 & 754241.10 & 711478.70 \\
-  5 & 1012979.13 & 943556.95 & 878417.35 & 786755.20 & 745483.33 & 683551.70 \\
-  6 & 1084917.22 & 989249.70 & 905072.13 & 716272.22 & 730215.42 & 651959.66 \\
-  7 & 1113954.86 & 1003744.40 & 852060.06 & 761738.57 & 713320.54 & 633101.34 \\
-  8 & 1061923.12 & 972081.71 & 892493.94 & 776092.12 & 708701.00 & 606811.46 \\
+  1 & 108868 & 30.67 & 2.91 & 1.56 & 2.65 & 1.09 & 9.67 & 16.11 & 6.35 \\
+  2 & 2948 & 170.08 & 13.69 & 1.47 & 9.20 & 4.67 & 6.89 & 18.69 & 11.65 \\
+  3 & 309748 & 5.95 & 2.01 & 1.44 & 1.92 & 0.68 & 12.52 & 14.50 & 1.93 \\
+  4 & 163982 & 16.99 & 2.30 & 1.46 & 2.13 & 0.77 & 11.12 & 14.99 & 3.81 \\
+  5 & 45414 & 50.30 & 4.26 & 1.52 & 3.67 & 1.57 & 9.04 & 16.86 & 7.69 \\
+  6 & 10380 & 86.99 & 7.16 & 1.43 & 5.55 & 2.49 & 8.41 & 17.60 & 9.03 \\
+  7 & 666 & 331.50 & 26.43 & 1.57 & 9.31 & 5.17 & 5.73 & 19.59 & 13.14 \\
    \hline
 \end{tabular}
-\caption{Calinski-Harabasz Criterion per k-cluster, per value of threshold}
+\caption{Clusters sizes and mean centers for $\Tau = 7.5$ minutes}
+\label{t:kmeans_centers_450}
 \end{table*}
-
-\begin{table}[!ht]
-\centering
-\begin{tabular}{rr}
-  \hline
- threshold & best k \\
-  \hline
-t300 &   7 \\
-  t450 &   7 \\
-  t600 &   6 \\
-  t900 &   5 \\
-  t1200 &   4 \\
-  t1800 &   3 \\
-   \hline
-\end{tabular}
-\caption{Best k for each threshold}
-\end{table}
-
-\begin{table}[ht]
-\centering
-\begin{tabular}{rr}
-  \hline
- threshold & value \\
-  \hline
-t300 & 0.91 \\
-  t450 & 0.90 \\
-  t600 & 0.88 \\
-  t900 & 0.84 \\
-  t1200 & 0.79 \\
-  t1800 & 0.71 \\
-   \hline
-\end{tabular}
-\caption{$BetweenSS / TotalSS$ -- Amount of variance in data explained}
-\end{table}
-
-\begin{table}[ht]
-\centering
-\begin{tabular}{rrrrrrrr}
-  \hline
- threshold & V1 & V2 & V3 & V4 & V5 & V6 & V7 \\
-  \hline
-t300 & 550 & 99091 & 7975 & 39032 & 2478 & 168677 & 338847 \\
-  t450 & 666 & 10380 & 2948 & 45414 & 108877 & 163985 & 309736 \\
-  t600 & 26568 & 865 & 97745 & 332060 & 171024 & 4408 &  \\
-  t900 & 352029 & 74821 & 181295 & 11200 & 1787 &  &  \\
-  t1200 & 189224 & 371318 & 49852 & 4593 &  &  &  \\
-  t1800 & 26484 & 191957 & 388959 &  &  &  &  \\
-   \hline
-\end{tabular}
-\caption{Sizes of each cluster for best k per threshold}
-\end{table}
-
-% latex table generated in R 3.3.1 by xtable 1.8-2 package
-% Wed Jan 31 03:12:43 2018
-\begin{table*}[ht]
-\centering
-\begin{tabular}{rrrrrrrrr}
-  \hline
- & Trips & AvTrips & AvLength & AvDisOri & AvDisDes & AvFirstH & AvLastH & AvRest \\
-  \hline
-1 & 412.89 & 33.00 & 1.25 & 10.64 & 4.95 & 5.75 & 19.71 & 13.45 \\
-  2 & 36.34 & 3.41 & 1.39 & 3.08 & 1.06 & 9.64 & 16.21 & 6.50 \\
-  3 & 108.34 & 8.92 & 1.27 & 6.78 & 2.63 & 8.20 & 17.77 & 9.48 \\
-  4 & 60.61 & 5.10 & 1.34 & 4.37 & 1.59 & 8.89 & 16.98 & 8.00 \\
-  5 & 210.51 & 16.93 & 1.28 & 10.79 & 4.67 & 6.67 & 18.97 & 12.21 \\
-  6 & 19.75 & 2.56 & 1.34 & 2.37 & 0.73 & 10.95 & 15.17 & 4.17 \\
-  7 & 6.49 & 2.20 & 1.33 & 2.10 & 0.64 & 12.47 & 14.49 & 1.98 \\
-   \hline
-\end{tabular}
-\caption{Centers for threshold = 300}
-\end{table*}
-
-% latex table generated in R 3.3.1 by xtable 1.8-2 package
-% Wed Jan 31 03:12:43 2018
-\begin{table*}[ht]
-\centering
-\begin{tabular}{rrrrrrrrr}
-  \hline
- & Trips & AvTrips & AvLength & AvDisOri & AvDisDes & AvFirstH & AvLastH & AvRest \\  \hline
-1 & 331.50 & 26.43 & 1.57 & 9.31 & 5.17 & 5.73 & 19.59 & 13.14 \\
-  2 & 86.99 & 7.16 & 1.43 & 5.55 & 2.49 & 8.41 & 17.60 & 9.03 \\
-  3 & 170.08 & 13.69 & 1.47 & 9.20 & 4.67 & 6.89 & 18.69 & 11.65 \\
-  4 & 50.30 & 4.26 & 1.52 & 3.67 & 1.57 & 9.04 & 16.86 & 7.69 \\
-  5 & 30.67 & 2.91 & 1.56 & 2.65 & 1.09 & 9.67 & 16.11 & 6.35 \\
-  6 & 16.99 & 2.30 & 1.46 & 2.13 & 0.77 & 11.12 & 14.99 & 3.81 \\
-  7 & 5.95 & 2.01 & 1.44 & 1.92 & 0.68 & 12.52 & 14.50 & 1.93 \\
-   \hline
-\end{tabular}
-\caption{Centers for threshold = 450}
-\end{table*}
-
-
-% latex table generated in R 3.3.1 by xtable 1.8-2 package
-% Wed Jan 31 03:12:43 2018
-\begin{table*}[ht]
-\centering
-\begin{tabular}{rrrrrrrrr}
-  \hline
- & Trips & AvTrips & AvLength & AvDisOri & AvDisDes & AvFirstH & AvLastH & AvRest \\
-  \hline
-1 & 60.90 & 5.04 & 1.58 & 4.13 & 1.95 & 8.78 & 17.20 & 8.24 \\
-  2 & 271.76 & 21.64 & 1.79 & 8.77 & 5.37 & 5.72 & 19.42 & 12.80 \\
-  3 & 34.38 & 3.07 & 1.68 & 2.76 & 1.27 & 9.38 & 16.41 & 6.90 \\
-  4 & 6.39 & 1.92 & 1.52 & 1.83 & 0.69 & 12.45 & 14.51 & 1.99 \\
-  5 & 18.96 & 2.28 & 1.57 & 2.11 & 0.85 & 10.74 & 15.24 & 4.41 \\
-  6 & 131.86 & 10.66 & 1.61 & 7.53 & 4.09 & 7.32 & 18.27 & 10.74 \\
-   \hline
-\end{tabular}
-\caption{Centers for threshold = 600}
-\end{table*}
-
-% latex table generated in R 3.3.1 by xtable 1.8-2 package
-% Wed Jan 31 03:12:43 2018
-\begin{table*}[ht]
-\centering
-\begin{tabular}{rrrrrrrrr}
-  \hline
- & Trips & AvTrips & AvLength & AvDisOri & AvDisDes & AvFirstH & AvLastH & AvRest \\
-  \hline
-1 & 6.80 & 1.81 & 1.62 & 1.72 & 0.70 & 12.37 & 14.53 & 2.07 \\
-  2 & 38.62 & 3.30 & 1.82 & 2.89 & 1.48 & 9.18 & 16.73 & 7.35 \\
-  3 & 20.89 & 2.25 & 1.73 & 2.09 & 0.96 & 10.31 & 15.52 & 5.08 \\
-  4 & 78.63 & 6.41 & 1.77 & 4.94 & 2.76 & 8.24 & 17.62 & 9.08 \\
-  5 & 180.14 & 14.33 & 2.06 & 7.52 & 4.99 & 6.11 & 18.89 & 11.78 \\
-   \hline
-\end{tabular}
-\caption{Centers for threshold = 900}
-\end{table*}
-
-
-% latex table generated in R 3.3.1 by xtable 1.8-2 package
-% Wed Jan 31 03:12:43 2018
-\begin{table*}[ht]
-\centering
-\begin{tabular}{rrrrrrrrr}
-  \hline
- & Trips & AvTrips & AvLength & AvDisOri & AvDisDes & AvFirstH & AvLastH & AvRest \\
-  \hline
-1 & 22.82 & 2.29 & 1.84 & 2.11 & 1.06 & 10.00 & 15.76 & 5.60 \\
-  2 & 7.19 & 1.76 & 1.68 & 1.68 & 0.71 & 12.30 & 14.55 & 2.14 \\
-  3 & 44.85 & 3.73 & 1.90 & 3.16 & 1.73 & 8.98 & 17.02 & 7.76 \\
-  4 & 114.34 & 9.12 & 2.30 & 5.92 & 3.98 & 6.93 & 18.21 & 10.43 \\
-   \hline
-\end{tabular}
-\caption{Centers for threshold = 1200}
-\end{table*}
-
-
-% latex table generated in R 3.3.1 by xtable 1.8-2 package
-% Wed Jan 31 03:12:43 2018
-\begin{table*}[ht]
-\centering
-\begin{tabular}{rrrrrrrrr}
-  \hline
- & Trips & AvTrips & AvLength & AvDisOri & AvDisDes & AvFirstH & AvLastH & AvRest \\
-  \hline
-1 & 54.75 & 4.42 & 2.33 & 3.52 & 2.21 & 8.45 & 17.40 & 8.35 \\
-  2 & 24.54 & 2.31 & 1.98 & 2.13 & 1.15 & 9.72 & 16.00 & 6.06 \\
-  3 & 7.52 & 1.69 & 1.77 & 1.61 & 0.72 & 12.23 & 14.58 & 2.22 \\
-   \hline
-\end{tabular}
-\caption{Centers for threshold = 1800}
-\end{table*}
-
-\clearpage
