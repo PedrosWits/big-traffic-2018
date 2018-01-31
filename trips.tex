@@ -89,9 +89,11 @@ s^{k}_{(u(i))} \neq s^{k}_{(v(j))}, \forall u,v &= 1, 2, \ldots, N \ , \ u \neq 
 
 However, ANPR can identify the same vehicle multiple times in the same run, if for instance the vehicle is stopped at a junction or traffic light. Hence, if two sightings occurred at the same location in a very short period of time, then there is a strong possibility that these are duplicate observations. As a simplification, we can assume that a trip should not contain cycles and that no camera should appear twice in the same trip. Yet, this assumption ignores cases where a vehicle is required to correct its route by passing through the same location as one previously observed in the same trip. Thus, we affirm that two sightings of vehicle \emph{k} are different if they were observed at two different points in time at different locations, or, if observed at the same location, then the time interval must be greater than a parameter $\gamma$, otherwise the two sightings are deemed as duplicates:
 
-\begin{equation} \label{e.sighting.different}
-t^{k}_{i} \ne t^{k}_{j} \Rightarrow s^{k}_{i} \ne s^{k}_{j} \ , \ i \ne j
-\end{equation}
+
+\begin{align} \label{e.sighting.different.2}
+ (\ c^{k}_{i} &\ne c^{k}_{j} \, )\ \vee \\
+ (\ c^{k}_{i} &= c^{k}_{j} \wedge |t^{k}_{i} - t^{k}_{j}| < \gamma \, )\ \Rightarrow s^{k}_{i} \ne s^{k}_{j}  \ , \ i \ne j \nonumber
+\end{align}
 
  Although the estimation of $\gamma$ carries similar considerations and consequences as those of estimating $\Tau$ and $\tau$, most duplicates can be identified in consecutive sightings of the same camera within the same trip. Even though a poor estimation of $\gamma$ also has impact in error propogation, this decreases substantially after filtering duplicates according to the heuristic above, due to the low occurrence of cycles in trips. Nevertheless, this issue needs to be fully investigated in future works.
 
