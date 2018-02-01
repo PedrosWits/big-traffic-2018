@@ -24,27 +24,33 @@ The rest of this paper is presented as follows. In Section \ref{s.related} we di
 \section{Related Work}
 \label{s.related}
 
-%Even though the cameras only cover a very small subset of the entire road network, the network of cameras provides a valuable time-varying picture of travel demands and traffic states.
+\begin{figure}[t]
+\centering
+\includegraphics[width=.95\linewidth]{ANPR-overview.pdf}
+\caption{Automatic number plate recognition system overview.}
+\label{fig:anpr-overview}
+\end{figure}
 
-Castillo et al~\cite{Castillo2008} used partial trip information from number-plate scans to compute travel demands, constructing this in the form of a trip matrix. They estimated link flows from a set of constraints composed of traffic conservation laws, prior knowledge and path flow disaggregation techniques, such as Stochastic User Equilibrium (SUE).
+The main use of ANPR data for the UTMC is estimating average journey times for selected or sensitive links in the road network. Furthermore, several authors have extensively researched how to use number-plate data as an extension to link counts for estimating origin-destination matrices and link flows~\cite{Castillo2010, Castillo2008, Hazelton2012}. However, very few works have focused on analysing individual or collective travel patterns from number-plate data, particularly across extended periods of time. Moreover, there is no consistent conceptual and analytical framework for transforming number plate data into a historical sequence of trips for each vehicle. Finally, we believe that trip data, properly identified from number-plate data, has the potential to unlock a number of new applications for urban traffic control and law enforcement. Thus, in section~\ref{s.trips} we present a conceptual methodology for grouping multiple camera observations of the same vehicle into one or several trips of that vehicle.
+
+Determining the distribution of travel modes is one of the fundamental steps in the four-stage model: an essential traffic modelling methodology for transportation planning~\cite{FourStepModel}. Previous works have used trip information derived from different sources of data to identify travel mode or purpose of trip. More notably, survey data, floating car data and mobile phone data have been used~\cite{ODMobileData, ClusteringGPS}.  Although number plate data has been used in~\cite{Clustering}, to identify different categories of trips, the authors do not differentiate between private or public travel modes and focus instead on categorising trips by time of occurrence. Hence, in section~\ref{s.classification} we apply the \emph{k-means} clustering algorithm to derived trip data and based on the results, we discuss the limitations of proposed methods and that of ANPR data.
 
 % However, Furthermore, ANPR cameras can either be fixed or
 
-{\color{red}Uses of trip data for understanding travel demands / traffic prediction
-
-Studies about best placement of cameras
-
-Number plate data is not as popular, for urban traffic monitoring and prediction, as other sources of data, namely GPS traces or floating vehicle data.
-Previous works trips from GPS traces, .
-
-%Therefore, number plate scans provide additional trip information, besides simple link counts, that has
-
- %estimating travel demands and traffic states. extended traditional methods of  travel demands
-
-
-Although significant research has gone into identifying trips from GPS traces, to the best of our knowledge, little research has gone into doing so with number plate data. Therefore, the contributions of this paper are twofold:
+% {\color{red}Uses of trip data for understanding travel demands / traffic prediction
+%
+% Studies about best placement of cameras
+%
+% Number plate data is not as popular, for urban traffic monitoring and prediction, as other sources of data, namely GPS traces or floating vehicle data.
+% Previous works trips from GPS traces, .
+%
+% %Therefore, number plate scans provide additional trip information, besides simple link counts, that has
+%
+%  %estimating travel demands and traffic states. extended traditional methods of  travel demands
+%
+%
+% Although significant research has gone into identifying trips from GPS traces, to the best of our knowledge, little research has gone into doing so with number plate data. Therefore, the contributions of this paper are twofold:
 
 % \begin{enumerate}
 %   \item
 % \end{itemize}
-}
