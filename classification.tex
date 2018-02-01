@@ -27,11 +27,11 @@ Tau & Trips & \thead{Average\\Length} & \thead{Proportion of Trips \\ Length 1} 
 \end{table}
 
 Transforming trips into features which can be used in clustering algorithms was a 3-step process:
-\begin{enumerate}
+\begin{enumerate*}[label=(\roman*)]
   \item First, every trip was summarised as a single row of data. The following information was extracted: length of trip, origin, destination, route, start and end times.
   \item Second, daily trip information was obtained for each vehicle: number of trips, median of trip lengths, number of sightings, distinct number of origins destinations, and routes, hour of first sighting, hour of last sighting and total rest time between trips.
   \item Finally, daily information per vehicle was collapsed into a single row by averaging this information across the 15 days.
-\end{enumerate}
+\end{enumerate*}
 
 Table~\ref{t:features} depicts a sample of the resulting features vector. A total of 1034107 distinct vehicles were detected. However, because a high percentage of trips containing a single sighting, some of these features were highly correlated. We therefore, chose to remove three of the features represented in~\ref{t:features}: \emph{Average Sightings}, \emph{Average Distinct Routes} and \emph{Average Hour Difference}, to avoid the obfuscation of the natural clustering ~\cite{Kmeans}. Furthermore we considered that a trip of length one has no destination (which explains values of average distinct destination below zero) and we filtered all instances of vehicles where the total number of trips is lower than 3, resulting in 642006 unique vehicles.
 
