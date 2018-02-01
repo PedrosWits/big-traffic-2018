@@ -4,27 +4,20 @@
 In this section we explain our technique for identifying which sets of sightings can be combined in order to make a trip.
 
 Let the $i_{th}$ sighting of vehicle \emph{k} be defined as the unordered pair:
-
 \begin{equation} \label{e.sighting}
 s^{k}_{i} = \{ c, t \},
 \end{equation}
-
 where \emph{c} uniquely identifies a camera, and \emph{t} is a scalar representing a point in time (e.g.\ a timestamp).
 
 Let an ordered sequence of sightings of vehicle \emph{k} define the $u_{th}$ trip of vehicle \emph{k}:
-
 \begin{equation} \label{e.trip}
 w^{k}_{u} = \left(s^{k}_{(1)}, s^{k}_{(2)}, \dots , s^{k}_{(n)}\right),
 \end{equation}
-
 where \( n \) is the length of the trip, i.e.\ the number of sightings. Moreover, let the corresponding journey time sequence, of length \(n-1\), be defined as the time difference of consecutive sightings:
-
 \begin{equation} \label{e.journeytime}
 jt^{k}_{u} = \left(t^{k}_{(1)} - t^{k}_{(2)}, \ldots, t^{k}_{(n)} - t^{k}_{(n-1)} \right).
 \end{equation}
-
 We consider a trip of \emph{$w^k_u$} valid if the following conditions hold:
-
 \begin{align}
 n &\ge 1 , \label{e.trip.constraints.1} \\
 \tau_{(i)} &< jt^{k}_{u(i)} < \Tau_{(i)} \ , \ \forall i \in jt^{k}_{u(i)} \label{e.trip.constraints.2},
