@@ -15,7 +15,7 @@ w^{k}_{u} = \left(s^{k}_{(1)}, s^{k}_{(2)}, \dots , s^{k}_{(n)}\right),
 \end{equation}
 where \( n \) is the length of the trip, i.e.\ the number of sightings. Moreover, let the corresponding journey time sequence, of length \(n-1\), be defined as the time difference of consecutive sightings:
 \begin{equation} \label{e.journeytime}
-jt^{k}_{u} = \left(t^{k}_{(1)} - t^{k}_{(2)}, \ldots, t^{k}_{(n)} - t^{k}_{(n-1)} \right).
+jt^{k}_{u} = \left(t^{k}_{(2)} - t^{k}_{(1)}, \ldots, t^{k}_{(n)} - t^{k}_{(n-1)} \right).
 \end{equation}
 We consider a trip of \emph{$w^k_u$} valid if the following conditions hold:
 \begin{align}
@@ -24,7 +24,7 @@ n &\ge 1 , \label{e.trip.constraints.1} \\
 \end{align}
 where $\tau_{(i)}$ and $\Tau_{(i)}$ are the lower and upper bound of the $i_{th}$ element of the journey time sequence.
 
-The first condition~\ref{e.trip.constraints.1} is straightforward and specifies that every trip should have at least one sighting. We acknowledge that thrips do exist which pass no ANPR cameras, and would thus have a value of $n$ equal to zero. However, for the purposes of the work here we cannot analyse such trips. The second condition~\ref{e.trip.constraints.2} defines a minimum and maximum travel times between consecutive observations. Its purpose is twofold:
+The first condition~\ref{e.trip.constraints.1} is straightforward and specifies that every identified trip should have at least one sighting. Obviously, vehicles can make trips that do not pass through any ANPR cameras and thus have no associated sightings: $n = 0$. However, this work focus on trips that we can observe and hence we consider that $n > 0$. The second condition~\ref{e.trip.constraints.2} defines a minimum and maximum travel times between consecutive observations. Its purpose is twofold:
 \begin{enumerate*}[label=(\roman*)]
   \item first, to allow separate trips made by the same vehicle to be differentiated. For instance, given two consecutive sightings of \emph{k} three hours apart, we would want to interpret them as belonging to different trips of \emph{k};
   \item second, it allows implausible trips to be identified. For example, an implausible trip can result from observing \emph{k} at a given camera and then a few seconds later at a second camera, several miles apart. Two explanations are common, either one of the cameras made a detection error, or there is another vehicle with a cloned number-plate travelling on the road network.
@@ -34,7 +34,7 @@ The first condition~\ref{e.trip.constraints.1} is straightforward and specifies 
   \centering
   \includegraphics[width=1\linewidth]{length-dist.pdf}
   \caption{Distribution of trips per length of trip.}
-  \label{fig:length-dist}  
+  \label{fig:length-dist}
 \end{figure}
 
 \begin{figure*}[!ht]%
