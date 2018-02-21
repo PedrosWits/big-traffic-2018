@@ -1,18 +1,18 @@
 % !TEX root = paper.tex
-\subsection{Clustering vehicles}\label{s.classification}
+\subsection{Clustering trips}\label{s.classification}
 
 One direct application of trip data is unsupervised learning. In this section we identify groups of vehicles with similar trip patterns based on frequency and diversity of travel. Clusters can represent private vehicles, such as work-home commuters, transit vehicles like buses and taxis, or other types of vehicles such as delivery trucks.
 %This in turn, may enable trip modes to be estimated
 %However, due to its limited coverage of the road network, it is not clear how well ANPR data can capture much the travel characteristics necessary to accurately describe the different groups.
 
-Due to distinctly different traffic behaviour during weekends, we chose to consider only trips occurring during weekdays. We thus used all number-plate data collected between the 6th and 24th of February and exclude data from the 2 weekends in-between. Furthermore, as mentioned in section~\ref{s.trips}, we used fixed empirical values for $\Tau$. Table~\ref{t:trips-tau} displays the number of trips, average trip length and the proportion of trips of length one, for varying values of $\Tau$. The effect of incrementing $\Tau$ on resulting trips is clear: increased trip lengths and decreased trips containing just a single sighting. On the other hand, we did not set a value for $\tau$, but instead handled implausible trips by filtering all sightings with confidence below 85\%. Duplicates were filtered after identifying consecutive sightings by the same camera occurring within the same trip. Clock synchronisation errors were provided in milliseconds with none exceeding 5 seconds. These were therefore ignored.
+Due to distinctly different traffic behaviour during weekends, we chose to consider only trips occurring during weekdays. We thus used all number-plate data collected between the 6th and 24th of February and exclude data from the 2 weekends in-between. Furthermore, as mentioned in section~\ref{s.trips}, we used fixed empirical values for $\Tau$. Table~\ref{t:trips-tau} displays the number of trips, average trip degree and the proportion of trips of degree one, for varying values of $\Tau$. The effect of incrementing $\Tau$ on resulting trips is clear: increased trip degrees and decreased trips containing just a single sighting. On the other hand, we did not set a value for $\tau$, but instead handled implausible trips by filtering all sightings with confidence below 85\%. Duplicates were filtered after identifying consecutive sightings by the same camera occurring within the same trip. Clock synchronisation errors were provided in milliseconds with none exceeding 5 seconds. These were therefore ignored.
 
 \begin{table}[t]
 \centering
 \tabcolsep=0.25cm
 \begin{tabular}{c c c c}
   \hline
-Tau & Trips & \thead{Average\\Length} & \thead{Proportion of Trips \\ Length 1} \\
+Tau & Trips & \thead{Average\\Degree} & \thead{Proportion of Trips \\ Degree 1} \\
   \hline
 5 min & 13,603,759 & 1.46 & 0.70 \\
 7.5 min & 12,394,709 & 1.60 & 0.64 \\
@@ -29,18 +29,18 @@ Tau & Trips & \thead{Average\\Length} & \thead{Proportion of Trips \\ Length 1} 
 
 Transforming trips into features which can be used in clustering algorithms was a 3-step process:
 \begin{enumerate*}[label=(\roman*)]
-  \item First, every trip was summarised as a single row of data. The following information was extracted: length of trip, origin, destination, route, start and end times.
-  \item Second, daily trip information was obtained for each vehicle: number of trips, median of trip lengths, number of sightings, distinct number of origins destinations, and routes, hour of first sighting, hour of last sighting and total rest time between trips.
+  \item First, every trip was summarised as a single row of data. The following information was extracted: degree of trip, origin, destination, route, start and end times.
+  \item Second, daily trip information was obtained for each vehicle: number of trips, median of trip degrees, number of sightings, distinct number of origins destinations, and routes, hour of first sighting, hour of last sighting and total rest time between trips.
   \item Finally, daily information per vehicle was collapsed into a single row by averaging this information across the 15 days.
 \end{enumerate*}
 
-Table~\ref{t:features} depicts a sample of the resulting features vector. A total of 1034107 distinct vehicles were detected. However, because there is a high percentage of trips containing a single sighting, some of these features were highly correlated. We therefore, chose to remove three of the features represented in~\ref{t:features}: \emph{Average Sightings}, \emph{Average Distinct Routes} and \emph{Average Hour Difference}, to avoid the obfuscation of the natural clustering ~\cite{Kmeans}. Furthermore we considered that a trip of length one has no destination (which explains values of average distinct destination below zero) and we filtered all instances of vehicles where the total number of trips is lower than 3, resulting in 642006 unique vehicles.
+Table~\ref{t:features} depicts a sample of the resulting features vector. A total of 1034107 distinct vehicles were detected. However, because there is a high percentage of trips containing a single sighting, some of these features were highly correlated. We therefore, chose to remove three of the features represented in~\ref{t:features}: \emph{Average Sightings}, \emph{Average Distinct Routes} and \emph{Average Hour Difference}, to avoid the obfuscation of the natural clustering ~\cite{Kmeans}. Furthermore we considered that a trip of degree one has no destination (which explains values of average distinct destination below zero) and we filtered all instances of vehicles where the total number of trips is lower than 3, resulting in 642006 unique vehicles.
 
 \begin{table*}[t]
 \centering
 \begin{tabular}{c c c c c c c c c c c}
   \hline
- \thead{Total\\Trips} & \thead{Average\\Trips} & \thead{Average\\Length} & \thead{Average\\Sightings} & \thead{Average\\Distinct\\Origins} & \thead{Average\\Distinct\\Destinations} & \thead{Average\\Distinct\\Routes} & \thead{Average\\First\\Hour} & \thead{Average\\Last\\Hour} & \thead{Average\\Hour\\Difference} & \thead{Average\\Rest\\Time} \\
+ \thead{Total\\Trips} & \thead{Average\\Trips} & \thead{Average\\Degree} & \thead{Average\\Sightings} & \thead{Average\\Distinct\\Origins} & \thead{Average\\Distinct\\Destinations} & \thead{Average\\Distinct\\Routes} & \thead{Average\\First\\Hour} & \thead{Average\\Last\\Hour} & \thead{Average\\Hour\\Difference} & \thead{Average\\Rest\\Time} \\
   \hline
 41 & 3.42 & 1.25 & 5.75 & 2.75 & 1.00 & 3.00 & 15.33 & 19.25 & 3.80 & 3.70 \\
 3 & 1.50 & 1.00 & 1.50 & 1.50 & 0.00 & 1.50 & 14.00 & 14.50 & 0.73 & 0.73 \\
@@ -57,7 +57,7 @@ Clustering of vehicles was performed using the Hartigan and Wong \emph{k-means} 
 
 \section{Results and Discussion}\label{s.results}
 
-Table~\ref{t:tau_comparison} provides a summary of multiple runs of \emph{k-means}. For each value of $\Tau$, the optimal number of clusters is selected by picking the value of $k$ that maximises the Calinski-Harabasz criterion. Furthermore, the measures of inter-cluster (betweeness) and intra-cluster (withiness) are depicted relative to the corresponding total sum of squares (total betweeness and total withiness). It is noteworthy that the best value of $k$ increases inversely to $\Tau$. Although a higher value of $k$ seems to suggest that trips with smaller values of $\Tau$ are able capture the variance in the data better, we have to consider that varying $\Tau$ affects the average trip length in the same direction whilst affecting the total number of trips in the opposite direction (table~\ref{t:trips-tau}).
+Table~\ref{t:tau_comparison} provides a summary of multiple runs of \emph{k-means}. For each value of $\Tau$, the optimal number of clusters is selected by picking the value of $k$ that maximises the Calinski-Harabasz criterion. Furthermore, the measures of inter-cluster (betweeness) and intra-cluster (withiness) are depicted relative to the corresponding total sum of squares (total betweeness and total withiness). It is noteworthy that the best value of $k$ increases inversely to $\Tau$. Although a higher value of $k$ seems to suggest that trips with smaller values of $\Tau$ are able capture the variance in the data better, we have to consider that varying $\Tau$ affects the average trip degree in the same direction whilst affecting the total number of trips in the opposite direction (table~\ref{t:trips-tau}).
 
 Tables~\ref{t:kmeans_centers_450} and~\ref{t:kmeans_centers_1200} depict the cluster centres for $\Tau$ equal to 7.5 minutes and 20 minutes respectively. These partially meet our expectations. For instance, we were expecting to find a relatively small cluster representing taxis with a high average number of trips per day, occurring over a variety of origins and destinations and over a large time frame. Clusters 2 and 7 for $\Tau = 7.5$ and cluster 4 for $\Tau = 20$ do indeed fit this profile. What differentiates cluster 2 from 7 in the first case is essentially a lower mean number of trips per day and smaller average time at which the first and last trips of the day occur. Additionally, buses to some extent fit this category as well, however we expected that buses could be separated from taxis by showing less diversity in the number of origins and destinations as these essentially do multiple runs of the same trip throughout the day. Still, this can be explained by the fact that buses take routes through main and secondary roads. As most cameras are placed in main roads, the one long bus trip can be perceived as multiple small trips as the bus alternates between arterial and main roads. This is in fact, one of the downsides of ANPR data and is something that the methodology presented in section~\ref{s.trips} needs to develop in the future.
 
@@ -80,42 +80,25 @@ Tau & Best $k$ & Betweenss & \thead{Average\\Withinss} & \thead{Calinski-\\Harab
 \end{tabular}
 \caption{\emph{k-means} performance for several values of $\Tau$.}
 \label{t:tau_comparison}
-\vspace{-0.5cm}
 \end{table}
 
-\begin{table*}[t]
+\begin{table}[t]
 \centering
-\small
-\begin{tabular}{c c c c c c c c c c}
+\tabcolsep=0.15cm
+\begin{tabular}{c c c c c c}
   \hline
- Cluster &  Size & \thead{Total\\Trips} & \thead{Average\\Trips} & \thead{Average\\Length} & \thead{Average\\Distinct\\Origins} & \thead{Average\\Distinct\\Destinations} & \thead{Average\\First\\Hour} & \thead{Average\\Last\\Hour} & \thead{Average\\Rest\\Time} \\
+ Cluster & Size & \thead{Average\\Trips} & \thead{Average\\Distinct\\Origins} & \thead{Average\\First\\Hour} & \thead{Average\\Last\\Hour} \\
   \hline
-  1 & 108868 & 30.67 & 2.91 & 1.56 & 2.65 & 1.09 & 9.67 & 16.11 & 6.35 \\
-  2 & 2948 & 170.08 & 13.69 & 1.47 & 9.20 & 4.67 & 6.89 & 18.69 & 11.65 \\
-  3 & 309748 & 5.95 & 2.01 & 1.44 & 1.92 & 0.68 & 12.52 & 14.50 & 1.93 \\
-  4 & 163982 & 16.99 & 2.30 & 1.46 & 2.13 & 0.77 & 11.12 & 14.99 & 3.81 \\
-  5 & 45414 & 50.30 & 4.26 & 1.52 & 3.67 & 1.57 & 9.04 & 16.86 & 7.69 \\
-  6 & 10380 & 86.99 & 7.16 & 1.43 & 5.55 & 2.49 & 8.41 & 17.60 & 9.03 \\
-  7 & 666 & 331.50 & 26.43 & 1.57 & 9.31 & 5.17 & 5.73 & 19.59 & 13.14 \\
+1 & 157962 & 2.45 & 2.27 & 11.38 & 14.93 \\
+  2 & 303513 & 2.18 & 2.09 & 12.53 & 14.47 \\
+  3 & 21549 & 6.02 & 5.00 & 8.68 & 17.23 \\
+  4 & 108094 & 2.99 & 2.73 & 9.99 & 15.86 \\
+  5 & 509 & 33.62 & 10.42 & 5.81 & 19.67 \\
+  6 & 1993 & 17.99 & 11.24 & 6.45 & 19.09 \\
+  7 & 4971 & 10.41 & 7.64 & 7.97 & 18.04 \\
+  8 & 58059 & 4.09 & 3.62 & 9.22 & 16.60 \\
    \hline
 \end{tabular}
-\caption{Clusters sizes and centres for $\Tau = 7.5$ minutes.}
-\label{t:kmeans_centers_450}
-\end{table*}
-
-\begin{table*}[t]
-\centering
-\small
-\begin{tabular}{c c c c c c c c c c}
-  \hline
- Cluster &  Size & \thead{Total\\Trips} & \thead{Average\\Trips} & \thead{Average\\Length} & \thead{Average\\Distinct\\Origins} & \thead{Average\\Distinct\\Destinations} & \thead{Average\\First\\Hour} & \thead{Average\\Last\\Hour} & \thead{Average\\Rest\\Time} \\
-  \hline
-  1 & 371318 & 7.19 & 1.76 & 1.68 & 1.68 & 0.71 & 12.30 & 14.55 & 2.14 \\
-    2 & 49852 & 44.85 & 3.73 & 1.90 & 3.16 & 1.73 & 8.98 & 17.02 & 7.76 \\
-    3 & 189224 & 22.82 & 2.29 & 1.84 & 2.11 & 1.06 & 10.00 & 15.76 & 5.60 \\
-    4 & 4593 & 114.34 & 9.12 & 2.30 & 5.92 & 3.98 & 6.93 & 18.21 & 10.43 \\
-   \hline
-\end{tabular}
-\caption{Clusters sizes and centres for $\Tau = 20$ minutes.}
-\label{t:kmeans_centers_1200}
-\end{table*}
+\caption{Cluster sizes and centres for $\Tau = 5$ minutes.}
+\label{t:kmeans_centers_300}
+\end{table}
