@@ -1,5 +1,5 @@
 % !TEX root = paper.tex
-\section{Trip Identification}\label{s.trips}
+\subsection{Trip Identification}\label{s.trips}
 
 In this section we explain our technique for identifying which sets of sightings can be combined in order to make a trip.
 
@@ -68,7 +68,7 @@ The simplest approach to choosing the value of $\Tau$ is to pick a fixed empiric
 
 On the other hand, a consistent set of models and methodologies for estimating $\Tau$ and $\tau$, under a variety of circumstances and road anomalies, remains an open research problem. Thus, for the purposes of this work, we will consider these parameters to be fixed. Nevertheless, the importance of estimating these parameters should not be understated. Any errors in trip identification that occur due to poor estimation and filtering methods will propagate and will be amplified in posterior analysis done using trip data. Therefore, $\Tau$ and $\tau$ estimation is something that needs to be carefully addressed and studied in the future in order to fully understand its impact in the outcome of the research. To briefly exemplify this, figure~\ref{fig:length-dist} shows how the number of trips per length of trip varies by fixing $\Tau$ at different empirical values ($\tau$ is ignored).
 
-\subsection{Duplicate scannings}
+\subsubsection*{Duplicate scannings}
 
 We need to ensure that every trip of vehicle \emph{k} is unique from all other trips of vehicle \emph{k}. I.e. given $W^k$ the set of all valid trips of $k$:
 
@@ -97,7 +97,7 @@ where $c_i^k$ and $t_i^k$ are the camera and timestamp of the $i_{th}$ sighting 
 
  Although the estimation of $\gamma$ carries similar considerations and consequences as those of estimating $\Tau$ and $\tau$, most duplicates can be identified in consecutive sightings of the same camera within the same trip. Even though a poor estimation of $\gamma$ also has an impact on error propagation, this decreases substantially after filtering duplicates according to the heuristic above, due to the low occurrence of cycles in trips. Nevertheless, this issue needs to be fully investigated in future works.
 
-\subsection{Errors in plate scanning}
+\subsubsection*{Errors in plate scanning}
 
 Number plate recognition cameras have accuracy rates of 99.9\% or higher. If we consider that on average 1 to 10 out of 10000 scans are misclassified number-plates then approximately 200 to 2000 scans everyday are incorrect. We categorise the errors made by ANPR cameras into two types:
 \begin{enumerate*}[label=(\roman*)]
