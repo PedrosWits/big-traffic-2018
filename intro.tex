@@ -7,9 +7,7 @@ In a utopian model we would have full disclosure of all journeys made by all veh
 
 For ANPR the problem now becomes that of recovering as much information about vehicle's journey as possible from the limited number of observations. ANPR cameras are normally located on major roads and interchanges, however, this only covers a tiny fraction of the road network. We can, though, estimate routes between cameras by understanding the distances between cameras and the most ``sensible'' routes between them. This allows us, given a set of ANPR sightings of the same vehicle, to produce a ``most likely'' route for that journey. It should be noted that we cannot determine the actual start and end of the journey as these will happen in areas not covered by ANPR. It should also be noted that for ethical reasons it is not normal to obtain actual number plates, but rather the hash of these. Though, for most situations this will suffice.
 
-Once we have a set of sightings of a vehicle using ANPR, we now need to convert these into actual journeys. The first requirement is to identify individual journeys. Although this can't be done with certainty we can apply general rules to distinguish one journey from the next. For example if two sightings are made from ANPR cameras which are connectable by a ``sensible'' route\footnote{Here ``sensible'' implies that a route between cameras A and B would not need to go through a third camera C.} in a time interval which is ``sensible'' then these can be determined to be part of the same journey. However, if the timings between two sightings is significantly longer than what would be expected then this would imply that the vehicle stopped between these two cameras and that the later sighting is part of a new journey.
-
-The process of journey identification needs to be performed on dirty data which contains numerous impurities which need to be handled. These include:
+Once we have a set of sightings of a vehicle using ANPR, we now need to convert these into actual journeys. The first requirement is to identify individual journeys. Although this can't be done with certainty we can apply general rules to distinguish one journey from the next. For example if two sightings are made from ANPR cameras which are connectable by a ``sensible'' route\footnote{Here ``sensible'' implies that a route between cameras A and B would not need to go through a third camera C.} in a time interval which is ``sensible'' then these can be determined to be part of the same journey. However, if the timings between two sightings is significantly longer than what would be expected then this would imply that the vehicle stopped between these two cameras and that the later sighting is part of a new journey. The process of journey identification needs to be performed on dirty data which contains numerous impurities which need to be handled. These include:
 
 \begin{itemize}
 	\item {\bf Number plate miss-reads:} Although ANPR cameras have accuracies of around 99, miss-reads are possible. This can lead to sightings being missed or vehicles being wrongly sighted in locations.
@@ -27,7 +25,7 @@ The rest of this paper is presented as follows. In Section \ref{s.related} we di
 \begin{figure}[t]
 \centering
 \includegraphics[width=.90\linewidth]{ANPR-overview.pdf}
-\caption{Overview of an ANPR system.}
+\caption{Overview of a ANPR-based system for traffic monitoring and control.}
 \label{fig:anpr-overview}
 \vspace{-0.6cm}
 \end{figure}

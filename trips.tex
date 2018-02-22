@@ -28,7 +28,7 @@ The first condition~\ref{e.trip.constraints.1} is straightforward and specifies 
   \item second, it allows implausible trips to be identified. For example, an implausible trip can result from observing \emph{k} at a given camera and then a few seconds later at a second camera, several miles apart. Two explanations are common, either one of the cameras made a detection error, or there is another vehicle with a cloned number-plate travelling on the road network.
 \end{enumerate*} Evidently, condition~\ref{e.trip.constraints.2} is only valid for trips of degree two sightings or greater. Nevertheless, trips can easily be differentiated by first sorting sightings by time of occurrence, then calculating the journey time sequence for the entire sequence and finally comparing each element against $\Tau$. An example of a trip identified this way can be seen in Figure~\ref{fig:trip-example}.
 
-The simplest approach to choosing the value of $\Tau$ is to pick a fixed empirical value, such as 5 or 10 minutes. However, if the distance between two cameras is greater than another pair of cameras, then it makes sense that $\Tau$ is relaxed. Similarly, if there is an anomaly in the road network, such as a traffic jam, and the routes connecting the two cameras are affected, then the value of $\Tau$ should also be adapted. Hence, $\Tau$ should be a function of the distance between the two cameras (or, more accurately, of the top n-routes between these) and the distribution of observed journey times. The same rationale can be applied to $\tau$.
+The simplest approach to choosing the value of $\Tau$ is to pick a fixed empirical value, such as 5 or 10 minutes. However, if the distance between two cameras is greater than another pair of cameras, then it makes sense that $\Tau$ is relaxed. Similarly, if there is an anomaly in the road network, such as a traffic jam, and the routes connecting the two cameras are affected, then the value of $\Tau$ should also be adapted. Hence, $\Tau$ should be a function of the distance between the two cameras (or, more accurately, of the top n-routes between these) and the distribution of observed journey times. The same rationale can be applied to $\tau$. However, due to time constraints, in this work we simply used several fixed values of $\Tau$ and set $\tau$ to zero. Figure~\ref{fig:length-dist} shows how the number of trips per degree of trip varies by fixing $\Tau$ at different empirical values.
 
 \begin{figure}[t]
   \centering
@@ -62,11 +62,11 @@ The simplest approach to choosing the value of $\Tau$ is to pick a fixed empiric
   \end{subfigure}\hfill
   \caption{Example of a trip of degree 4. On the left side the corresponding data table is shown. The $u_{th}$ trip of each vehicle is given by the variable \emph{Trip}, whereas the $i_{th}$ sighting is given by variable \emph{Sighting}. The variable \emph{JourneyTime} gives the travel time from the previous to current sighting. Lastly, the variable \emph{TripId} represents the unique sequence of cameras that describes the trip. This allows trips to be grouped and summarised not only in terms of their origins and destination, but also routes. On the right side, the same trip is plotted on a map. The circles represent camera locations whereas the lines represent the fastest driving routes between sightings rather than the true route taken by the vehicle. Even though no routing information is available for each consecutive pair of sightings, the observed journey times can be compared against the distribution of collective journey times to rank the set of most likely routes chosen (which can be determined for instance by Stochastic User Equilibrium~\cite{Castillo2008}).}%
   \label{fig:trip-example}%
+  \vspace{-0.40cm}
 \end{figure*}
+\vspace{-0.25cm}
 
-On the other hand, a consistent set of models and methodologies for estimating $\Tau$ and $\tau$, under a variety of circumstances and road anomalies, remains an open research problem. Thus, for the purposes of this work, we consider these parameters to be fixed. Nevertheless, the importance of estimating these parameters should not be understated. Any errors in trip identification that occur due to poor estimation and filtering methods will propagate and will be amplified in posterior analysis done using trip data. To briefly exemplify this, figure~\ref{fig:length-dist} shows how the number of trips per degree of trip varies by fixing $\Tau$ at different empirical values ($\tau$ is ignored).
-
-\subsubsection*{Duplicate scannings}
+\subsection{Duplicate scannings}
 
 We need to ensure that every trip of vehicle \emph{k} is unique from all other trips of vehicle \emph{k}. That is, given $W^k$ the set of all valid trips of $k$:
 
@@ -100,12 +100,30 @@ Otherwise the two sightings are deemed as duplicates:
 where $c_i^k$ and $t_i^k$ are the camera and timestamp of the $i_{th}$ sighting of vehicle $k$.
 
  Although the estimation of $\gamma$ carries similar considerations and consequences as those of estimating $\Tau$ and $\tau$, most duplicates can be identified in consecutive sightings of the same camera within the same trip. Even though a poor estimation of $\gamma$ also has an impact on error propagation, this decreases substantially after filtering duplicates according to the heuristic above, due to the low occurrence of cycles in trips.
+\vspace{-0.25cm}
 
-\subsubsection*{Errors in plate scanning}
+\subsection{Errors in plate scanning}
 
-Number plate recognition cameras have accuracy rates of 99.9\% or higher. If we consider that on average 1 to 10 out of 10000 scans are misclassified number-plates then approximately 200 to 2000 scans everyday are incorrect. We categorise the errors made by ANPR cameras into two types:
-\begin{enumerate*}[label=(\roman*)]
-  \item a passing vehicle is not detected by the camera;
-  \item a different vehicle is detected instead.
-\end{enumerate*}
-In the first case, there is no observed data. The corresponding trip sequence for the affected vehicle will be missing a sighting but we will have no indication of this. It should be noted that this could also happen in the case where a vehicle does not take the `normal' route and pass this intermediary camera. For the second case, there is a recorded sighting, but this will be assigned to the incorrect vehicle. Even though, the camera provides a value of \emph{confidence} which helps in diagnosing incorrect scans, errors still occur for high values of confidence. Even so, in this work we do not present a complex solution for this issue.
+ANPR cameras have average accuracy rates of 99.9\% and higher. If we consider that on average 1 to 10 out of 10000 number plate scans are misclassified number-plates then approximately between 200 to 2000 scans everyday are incorrect. These errors propagate and lead to innacuracies in the identification of trips. In fact, misclassifications affect the trip sequences of two vehicles: the true passing vehicle and the vehicle erroneously detected instead. The true vehicle will be missing a sighting in the correspoding trip sequence vector whereas the other vehicle's trip sequence will contain an extra invalid sighting. Moreover, ANPR cameras may exceptionally fail to detect passing vehicles. Even though only the passing vehicle is affected in this case, it's trip sequence vector is nonetheless affected. Therefore, due to their impact in trip identification, it is important to detect and address missing and misclassified scans.
+
+We filer invalid sightings by removing all sightings containing a \emph{confidence} value below $85\%$. However, we do not address missing scans in this work.
+
+\begin{table}[!ht]
+\centering
+\tabcolsep=0.25cm
+\begin{tabular}{c c c c}
+  \hline
+Tau & Trips & \thead{Average\\Degree} & \thead{Proportion of Trips \\ Degree 1} \\
+  \hline
+5 min & 13,603,759 & 1.46 & 0.70 \\
+7.5 min & 12,394,709 & 1.60 & 0.64 \\
+10 min & 11,690,791 & 1.69 & 0.61 \\
+15 min & 10,823,333 & 1.83 & 0.57 \\
+20 min & 10,305,860 & 1.92 & 0.54 \\
+30 min &  9,653,499 & 2.04 & 0.52 \\
+   \hline
+\end{tabular}
+\caption{Overview of trip data for varying values of $\Tau$.}
+\label{t:trips-tau}
+\vspace{-0.5cm}
+\end{table}

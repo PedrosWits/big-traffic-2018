@@ -1,41 +1,6 @@
 % !TEX root = paper.tex
 \subsection{Clustering trips}\label{s.classification}
 
-One direct application of trip data is unsupervised learning. In this section we identify groups of vehicles with similar trip patterns based on frequency and diversity of travel. Clusters can represent private vehicles, such as work-home commuters, transit vehicles like buses and taxis, or other types of vehicles such as delivery trucks.
-%This in turn, may enable trip modes to be estimated
-%However, due to its limited coverage of the road network, it is not clear how well ANPR data can capture much the travel characteristics necessary to accurately describe the different groups.
-
-Due to distinctly different traffic behaviour during weekends, we chose to consider only trips occurring during weekdays. We thus used all number-plate data collected between the 6th and 24th of February and exclude data from the 2 weekends in-between. Furthermore, as mentioned in section~\ref{s.trips}, we used fixed empirical values for $\Tau$. Table~\ref{t:trips-tau} displays the number of trips, average trip degree and the proportion of trips of degree one, for varying values of $\Tau$. The effect of incrementing $\Tau$ on resulting trips is clear: increased trip degrees and decreased trips containing just a single sighting. On the other hand, we did not set a value for $\tau$, but instead handled implausible trips by filtering all sightings with confidence below 85\%. Duplicates were filtered after identifying consecutive sightings by the same camera occurring within the same trip. Clock synchronisation errors were provided in milliseconds with none exceeding 5 seconds. These were therefore ignored.
-
-\begin{table}[t]
-\centering
-\tabcolsep=0.25cm
-\begin{tabular}{c c c c}
-  \hline
-Tau & Trips & \thead{Average\\Degree} & \thead{Proportion of Trips \\ Degree 1} \\
-  \hline
-5 min & 13,603,759 & 1.46 & 0.70 \\
-7.5 min & 12,394,709 & 1.60 & 0.64 \\
-10 min & 11,690,791 & 1.69 & 0.61 \\
-15 min & 10,823,333 & 1.83 & 0.57 \\
-20 min & 10,305,860 & 1.92 & 0.54 \\
-30 min &  9,653,499 & 2.04 & 0.52 \\
-   \hline
-\end{tabular}
-\caption{Overview of trip data for varying values of $\Tau$.}
-\label{t:trips-tau}
-\vspace{-0.5cm}
-\end{table}
-
-Transforming trips into features which can be used in clustering algorithms was a 3-step process:
-\begin{enumerate*}[label=(\roman*)]
-  \item First, every trip was summarised as a single row of data. The following information was extracted: degree of trip, origin, destination, route, start and end times.
-  \item Second, daily trip information was obtained for each vehicle: number of trips, median of trip degrees, number of sightings, distinct number of origins destinations, and routes, hour of first sighting, hour of last sighting and total rest time between trips.
-  \item Finally, daily information per vehicle was collapsed into a single row by averaging this information across the 15 days.
-\end{enumerate*}
-
-Table~\ref{t:features} depicts a sample of the resulting features vector. A total of 1034107 distinct vehicles were detected. However, because there is a high percentage of trips containing a single sighting, some of these features were highly correlated. We therefore, chose to remove three of the features represented in~\ref{t:features}: \emph{Average Sightings}, \emph{Average Distinct Routes} and \emph{Average Hour Difference}, to avoid the obfuscation of the natural clustering ~\cite{Kmeans}. Furthermore we considered that a trip of degree one has no destination (which explains values of average distinct destination below zero) and we filtered all instances of vehicles where the total number of trips is lower than 3, resulting in 642006 unique vehicles.
-
 \begin{table*}[t]
 \centering
 \begin{tabular}{c c c c c c c c c c c}
@@ -53,7 +18,22 @@ Table~\ref{t:features} depicts a sample of the resulting features vector. A tota
 \label{t:features}
 \end{table*}
 
-Clustering of vehicles was performed using the Hartigan and Wong \emph{k-means} algorithm, for each value of $\Tau$. The number of clusters \emph{k} was varied between 2 and 8 and executed with a maximum of 200 iterations and 100 different starting states of the algorithm. The Calinski-Harabasz criterion is used to pick the best value of $k$, the one that minimises the within-cluster and between-cluster errors and provides the more natural clusters ~\cite{Kmeans}. The results of vehicle clustering are presented and discussed in the section below.
+One direct application of trip data is unsupervised learning. In this section we identify groups of vehicles with similar trip patterns based on frequency and diversity of travel. Clusters can represent private vehicles, such as work-home commuters, transit vehicles like buses and taxis, or other types of vehicles such as delivery trucks.
+%This in turn, may enable trip modes to be estimated
+%However, due to its limited coverage of the road network, it is not clear how well ANPR data can capture much the travel characteristics necessary to accurately describe the different groups.
+
+Due to distinctly different traffic behaviour during weekends, we chose to consider only trips occurring during weekdays. Therefore, we used all number plate data collected between the 6th and 24th of February and excluded data from the 2 weekends in-between. Furthermore, as mentioned in section~\ref{s.trips}, we used fixed empirical values for $\Tau$. Table~\ref{t:trips-tau} displays the number of trips, average trip degree and the proportion of trips of degree one, for varying values of $\Tau$. The effect of incrementing $\Tau$ on resulting trips is clear: increased trip degrees and decreased trips containing just a single sighting. On the other hand, we did not set a value for $\tau$, but instead handled implausible trips by filtering all sightings with confidence below 85\%. Duplicates were filtered after identifying consecutive sightings by the same camera occurring within the same trip. Clock synchronisation errors were provided in milliseconds with none exceeding 5 seconds. These were hence ignored.
+
+Transforming trips into features which can be used in clustering algorithms was a 3-step process:
+\begin{enumerate*}[label=(\roman*)]
+  \item First, every trip was summarised as a single row of data. The following information was extracted: degree of trip, origin, destination, route, start and end times.
+  \item Second, daily trip information was obtained for each vehicle: number of trips, median of trip degrees, number of sightings, distinct number of origins destinations, and routes, hour of first sighting, hour of last sighting and total rest time between trips.
+  \item Finally, daily information per vehicle was collapsed into a single row by averaging this information across the 15 days.
+\end{enumerate*}
+
+Table~\ref{t:features} depicts a sample of the resulting features vector. A total of 1,034,107 distinct vehicles were detected. However, because there is a high percentage of trips containing a single sighting, some of these features were highly correlated. We therefore, chose to remove three of the features represented in table~\ref{t:features}: \emph{Average Sightings}, \emph{Average Distinct Routes} and \emph{Average Hour Difference}, to avoid the obfuscation of the natural clustering ~\cite{Kmeans}. Furthermore we considered that a trip of degree one has no destination (which explains values of average distinct destination below one) and we filtered all instances of vehicles where the total number of trips is lower than 3, resulting in 642,006 unique vehicles.
+
+Clustering of vehicles was performed using the Hartigan and Wong \emph{k-means} algorithm, for each value of $\Tau$. The number of clusters \emph{k} was varied between 2 and 8 and executed with a maximum of 200 iterations and 100 different starting states of the algorithm. The Calinski-Harabasz criterion is used to determine the best value of $k$, the one that minimises the within-cluster and between-cluster errors and provides the more natural clusters ~\cite{Kmeans}. The results of trip clustering are presented and discussed in the next section.
 
 \section{Results and Discussion}\label{s.results}
 
