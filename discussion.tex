@@ -5,9 +5,13 @@ Most urban cities in the world employ a network of ANPR cameras that are used fo
 
 We have also identified two parameters, $\tau$ and $\Tau$ as critical in the discrimination of plausible and implausible trips. Hence, future work should first and foremost focus on developing formal methods to estimate these parameters from observed distributions of travel times and by applying knowledge about the structure of the road network. Any errors in trip identification that occur due to poor estimation and filtering methods will propagate and be amplified in posterior analysis done using trip data. Moreover, methods for addressing issues concerning camera performance, namely wrong and duplicate scans, should be further developed and researched.
 
-Once trip data has been computed, a range of interesting applications are available. This work tries to identify groups of vehicles by clustering information about frequency and diversity of travel. By associating a vehicle with a cluster that represents taxis, or home-to-work commuters, one can begin estimating trip mode usage across the city. However, the results presented here could benefit from extra work and further validation. Finally, future work can focus on using trip data to solve interesting research problems such as:
+Once trip data has been computed, a range of interesting applications are available. This work tries to identify groups of vehicles by clustering information about frequency and diversity of travel. By associating a vehicle with a cluster that represents taxis, or home-to-work commuters, one can begin estimating trip mode usage across the city. However, the results presented here could benefit from extra work and further validation. Namely, gaining access to a database that maps plate numbers to vehicle types would not only provide means to better validate the proposed methodology but also enable the application of supervised learning instead. Furthermore, this work can be improved upon by using other data sources as a baseline for evaluating the reliability of extracted trips, such as GPS taxi traces. Finally, future work can focus on using trip data to solve interesting research problems such as:
 \begin{enumerate*}[label=(\roman*)]
   \item real-time route recommendation using probabilistic graphical models;
   \item detection of abnormal trip patterns for helping law enforcement in the identification of suspect vehicles or behaviour;
   \item modelling how drivers make routing choices in the presence of anomalies in the road network.
 \end{enumerate*}
+
+\subsection*{Acknowledgments}
+
+The authors would like to thank Phil Blythe, Professor of Intelligent Transport Systems at Newcastle University, and Ray King from the Tyne and Wear Urban Traffic and Management Centre for providing guidance and access to the Automatic Number Plate Recognition database.
