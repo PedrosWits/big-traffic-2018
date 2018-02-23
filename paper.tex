@@ -66,6 +66,7 @@
 \usepackage{float}
 \usepackage{placeins}
 \usepackage{microtype}
+\usepackage{enumitem}
 
 \newcommand{\Tau}{\mathrm{T}}
 
@@ -78,7 +79,7 @@
 %\setcounter{section}{3} % comment these two lines out.
 
 \title{\Large Clustering Vehicles based on Trips Identified from Automatic \\ Number Plate Recognition Camera Scans}
-\author{Pedro M. Pinto Silva \thanks{School of Computing, Newcastle University, United Kingdom}
+\author{Pedro M. Pinto Silva \thanks{School of Computing, Newcastle University, United Kingdom\break \{p.pinto-da-silva2, matthew.forshaw, stephen.mcgough\}@newcas\-tle.ac.uk}
 \and
 Matthew Forshaw\footnotemark[1]
 \and
@@ -94,7 +95,7 @@ A. Stephen McGough\footnotemark[1]}
 % Please note that "20XX" should be changed to the year of the meeting.
 
 % Default Copyright Statement
-\fancyfoot[R]{\footnotesize{\textbf{Copyright \textcopyright\ 2018 by BigTraffic\\
+\fancyfoot[R]{\footnotesize{\textbf{Copyright \textcopyright\ 2018\\
 Unauthorized reproduction of this article is prohibited}}}
 
 % Depending on which copyright you agree to when you sign the copyright form, the copyright
@@ -111,7 +112,7 @@ Unauthorized reproduction of this article is prohibited}}}
 %\pagenumbering{arabic}
 %\setcounter{page}{1}%Leave this line commented out.
 
-\begin{abstract} \small\baselineskip=9pt In major cities, government agencies increasingly employ automatic number-plate recognition (ANPR) technology in law enforcement and traffic control. In the Tyne and Wear region (UK) the network of ANPR cameras is used to monitor travel times across sensitive roads. So far, few works have explored the full potential of number-plate scans for analysing individual and collective travel patterns. In this work we present a methodology for deriving trips from vehicle sightings at fixed camera locations. We illustrate the effect of parameters $\tau$ and $\Tau$ on trip discrimination and on the detection of implausible trips. To demonstrate the potential of trip data we apply \emph{k-means} clustering to trips identified from over 40 million plate scans recorded over fifteen weekdays. Results show that whilst private and transit travel modes can begin to be inferred from the resulting clusters, further work needs to be put into developing a more consistent and integrated framework for trip identification in ANPR data.\end{abstract}
+\begin{abstract} \small\baselineskip=9pt In major cities, government agencies increasingly employ automatic number-plate recognition (ANPR) technology in law enforcement and traffic control. In the Tyne and Wear region (UK) the network of ANPR cameras is used to monitor travel times across sensitive roads. So far, few works have explored the full potential of number-plate scans for analysing individual and collective travel patterns. In this work we present a methodology for deriving trips from vehicle sightings at fixed camera locations. We identify two parameters $\tau$ and $\Tau$ as essential for identifying implausible trips and differentiating between multiple trips of the same vehicle. To demonstrate the applicability of trip data we apply \emph{k-means} clustering to trips identified from over 40 million plate scans recorded over fifteen weekdays. Results show that whilst private and transit travel modes can begin to be inferred from the resulting clusters, further work needs to be put into developing a more consistent and integrated framework for trip identification in ANPR data.\end{abstract}
 
 
 \input{intro.tex}
@@ -127,16 +128,16 @@ Unauthorized reproduction of this article is prohibited}}}
 \begin{thebibliography}{99}
 
 \bibitem{ODMobileData}
-Alexander, Lauren, et al. "Origin–-destination trips by purpose and time of day inferred from mobile phone data." Transportation research part c: emerging technologies 58 (2015): 240-250.
+Alexander, L., Jiang, S., Murga, M., \& González, M. C. "Origin–-destination trips by purpose and time of day inferred from mobile phone data." Transportation research part c: emerging technologies 58 (2015): 240-250.
 
 \bibitem{Castillo2010}
-Castillo, Enrique, et al. {\em Optimal use of plate-scanning resources for route flow estimation in traffic networks}. IEEE Transactions on Intelligent Transportation Systems 11.2 (2010): 380-391.
+Castillo, E. Gallego, I., Menéndez, J. M., \& Rivas, A {\em Optimal use of plate-scanning resources for route flow estimation in traffic networks}. IEEE Transactions on Intelligent Transportation Systems 11.2 (2010): 380-391.
 
 \bibitem{Castillo2008}
-Castillo, Enrique, José María Menéndez, and Pilar Jiménez. {\em Trip matrix and path flow reconstruction and estimation based on plate scanning and link observations}. Transportation Research Part B: Methodological 42.5 (2008): 455-481.
+Castillo, E., Menéndez, J. M., \& Jiménez, P. {\em Trip matrix and path flow reconstruction and estimation based on plate scanning and link observations}. Transportation Research Part B: Methodological 42.5 (2008): 455-481.
 
 \bibitem{Clustering}
-Chen, Huiyu, Chao Yang, and Xiangdong Xu. {\em Clustering Vehicle Temporal and Spatial Travel Behavior Using License Plate Recognition Data}. Journal of Advanced Transportation 2017 (2017).
+Chen, H., Yang, C., \& Xu, X. {\em Clustering Vehicle Temporal and Spatial Travel Behavior Using License Plate Recognition Data}. Journal of Advanced Transportation 2017 (2017).
 
 \bibitem{noVehiocles}
 Department for Transport {\em Provisional Road Traffic Estimates Great Britain: October 2016-September 2017}. url (visited January 2017): https://www.gov.uk\-/government/statistics/provisional-road-traffic-estima\-tes-great-britain-october-2016-to-september-2017.
@@ -146,22 +147,22 @@ Department for Transport {\em Provisional Road Traffic Estimates Great Britain: 
 Department for Transport {\em Vehicle Licensing Statistics: Quarter 3 (Jul-Sep) 2017}. url (visited 31 January 2017): https://www.gov.uk/government/statistics\-/vehicle-licensing-statistics-july-to-september-2017.
 
 \bibitem{EvolutionUTMC2013}
-Hamilton, Andrew, et al. {\em The evolution of urban traffic control: changing policy and technology}. Transportation planning and technology 36.1 (2013): 24-43.
+Hamilton, Andrew, Waterson, B., Cherrett, T., Robinson, A., \& Snell, I. {\em The evolution of urban traffic control: changing policy and technology}. Transportation planning and technology 36.1 (2013): 24-43.
 
 \bibitem{FourStepModel}
 McNally, Michael G. "The four-step model." Handbook of Transport Modelling: 2nd Edition. Emerald Group Publishing Limited, 2007. 35-53.
 
 \bibitem{Hazelton2012}
-Parry, Katharina, and Martin L. Hazelton. {\em Estimation of origin-–destination matrices from link counts and sporadic routing data}. Transportation Research Part B: Methodological 46.1 (2012): 175-188.
+Parry, K., \& Hazelton, M. L. {\em Estimation of origin-–destination matrices from link counts and sporadic routing data}. Transportation Research Part B: Methodological 46.1 (2012): 175-188.
 
 \bibitem{ClusteringGPS}
-Schüssler, Nadine, and Kay W. Axhausen. {\em Identifying trips and activities and their characteristics from GPS raw data without further information}. Arbeitsbericht Verkehrs-und Raumplanung 502 (2008).
+Schüssler, N., \& Axhausen, K. W. {\em Identifying trips and activities and their characteristics from GPS raw data without further information}. Arbeitsbericht Verkehrs-und Raumplanung 502 (2008).
 
 \bibitem{Kmeans}
-Steinley, Douglas, and Michael J. Brusco. {\em Choosing the number of clusters in Κ-means clustering}. Psychological Methods 16.3 (2011): 285.
+Steinley, D., \& Brusco, M. J. {\em Choosing the number of clusters in Κ-means clustering}. Psychological Methods 16.3 (2011): 285.
 
 \bibitem{SurveyITS2011}
-Zhang, Junping, et al. {\em Data-driven intelligent transportation systems: A survey}. IEEE Transactions on Intelligent Transportation Systems 12.4 (2011): 1624-1639.
+Zhang, J., Wang, F. Y., Wang, K., Lin, W. H., Xu, X., \& Chen, C. {\em Data-driven intelligent transportation systems: A survey}. IEEE Transactions on Intelligent Transportation Systems 12.4 (2011): 1624-1639.
 
 % \bibitem{ShortestPath?2015}
 % Zhu, Shanjiang, and David Levinson. {\em Do people use the shortest path? An empirical test of Wardrop’s first principle}. PloS one 10.8 (2015): e0134322.

@@ -1,26 +1,29 @@
 % !TEX root = paper.tex
 \subsection{Clustering vehicles}\label{s.classification}
 
-\begin{table*}[t]
-\centering
-\begin{tabular}{c c c c c c c c c c c}
-  \hline
- \thead{Total\\Trips} & \thead{Average\\Trips} & \thead{Average\\Degree} & \thead{Average\\Sightings} & \thead{Average\\Distinct\\Origins} & \thead{Average\\Distinct\\Destinations} & \thead{Average\\Distinct\\Routes} & \thead{Average\\First\\Hour} & \thead{Average\\Last\\Hour} & \thead{Average\\Hour\\Difference} & \thead{Average\\Rest\\Time} \\
-  \hline
-41 & 3.42 & 1.25 & 5.75 & 2.75 & 1.00 & 3.00 & 15.33 & 19.25 & 3.80 & 3.70 \\
-3 & 1.50 & 1.00 & 1.50 & 1.50 & 0.00 & 1.50 & 14.00 & 14.50 & 0.73 & 0.73 \\
-7 & 2.33 & 1.33 & 3.33 & 2.33 & 0.67 & 2.33 & 11.00 & 13.00 & 2.44 & 2.41 \\
-12 & 2.40 & 1.10 & 3.60 & 2.40 & 0.60 & 2.40 & 14.40 & 16.40 & 2.00 & 1.95 \\
-   \hline
-\end{tabular}
-\caption{Sample of extracted features from trips taken from 15 weekdays of number plate data.}
-\vspace{-0.2cm}
-\label{t:features}
-\end{table*}
-
 One application of trip data is to group vehicles together according to similar trip patterns, namely frequency and diversity of travel. We can distinguish vehicles based on private and transit modes of transportation and classes within these, such as everyday commuters versus sporadic drivers, buses versus taxis, and other types of vehicles such as lorries and delivery trucks. Ideally, we would like to build a model, through supervised learning, that is able to classify a vehicle from unseen trip data. However, due to privacy laws, there is no publicly available database that maps a plate number into one or several of the categories above. Therefore, we've decided to group vehicles by performing unsupervised learning using the \emph{k-means} clustering algorithm. Despite not being able to perform a rigorous validation or interpretation of the resulting clusters, we can begin to understand how useful trip data is to describe vehicles' travel patterns, given the limited coverage of the cameras in the road network.
 
-Due to distinctly different traffic behaviour during weekends, we only consider trips occurring during weekdays. Therefore, we used all number plate data collected between the 6th and 24th of February and excluded data from the 2 weekends in-between. Furthermore, as mentioned in section~\ref{s.trips}, we used fixed empirical values for $\Tau$. Table~\ref{t:trips-tau} displays the number of trips, average trip degree and the proportion of trips of degree one, for varying values of $\Tau$. The effect of incrementing $\Tau$ on resulting trips is clear: increased trip degrees and decreased trips containing just a single sighting. On the other hand, we did not set a value for $\tau$, but instead handled implausible trips by filtering all sightings with confidence below 85\%. Duplicates were filtered after identifying consecutive sightings by the same camera occurring within the same trip. Clock synchronisation errors were provided in milliseconds with none exceeding 5 seconds. These were hence ignored.
+Due to distinctly different traffic behaviour during weekends, we only consider trips occurring during weekdays. Therefore, we used all number plate data collected between the 6th and 24th of February and excluded data from the 2 weekends in-between. Furthermore, as mentioned in section~\ref{s.trips}, we used fixed empirical values for $\Tau$. Table~\ref{t:trips-tau} displays the number of trips, average trip degree and the proportion of trips of degree one, for varying values of $\Tau$. The effect of incrementing $\Tau$ on resulting trips is clear: increased trip degrees and decreased trips containing just a single sighting. On the other hand, we did not set a value for $\tau$, but instead handled implausible trips by filtering out all sightings with confidence below 85\%. Duplicates were filtered after identifying consecutive sightings by the same camera occurring within the same trip. Clock synchronisation errors were provided in milliseconds with none exceeding 5 seconds. These were hence ignored.
+
+\begin{table}[t]
+\centering
+\tabcolsep=0.25cm
+\begin{tabular}{c c c c}
+  \hline
+$\Tau$ & Trips & \thead{Average\\Degree} & \thead{Proportion of Trips \\ Degree 1} \\
+  \hline
+5 min & 13,603,759 & 1.46 & 0.70 \\
+7.5 min & 12,394,709 & 1.60 & 0.64 \\
+10 min & 11,690,791 & 1.69 & 0.61 \\
+15 min & 10,823,333 & 1.83 & 0.57 \\
+20 min & 10,305,860 & 1.92 & 0.54 \\
+30 min &  9,653,499 & 2.04 & 0.52 \\
+   \hline
+\end{tabular}
+\caption{Overview of trip data for varying values of $\Tau$.}
+\label{t:trips-tau}
+\vspace{-0.5cm}
+\end{table}
 
 Transforming trips into features which can be used in clustering algorithms was a 3-step process:
 \begin{enumerate*}[label=(\roman*)]
@@ -29,23 +32,22 @@ Transforming trips into features which can be used in clustering algorithms was 
   \item Finally, daily information per vehicle was collapsed into a single row by averaging this information across the 15 days.
 \end{enumerate*}
 
-Table~\ref{t:features} depicts a sample of the resulting features vector. A total of 1,034,107 distinct vehicles were detected. However, because there is a high percentage of trips containing a single sighting, some of these features were highly correlated. We therefore, chose to remove three of the features represented in table~\ref{t:features}: \emph{Average Sightings}, \emph{Average Distinct Routes} and \emph{Average Hour Difference}, to avoid the obfuscation of the natural clustering ~\cite{Kmeans}. Furthermore we considered that a trip of degree one has no destination (which explains values of average distinct destination below one) and we filtered all instances of vehicles where the total number of trips is lower than 3, resulting in 642,006 unique vehicles.
+Table~\ref{t:features} depicts a sample of the resulting features vector. A total of 1,034,107 distinct vehicles were detected. However, because there is a high percentage of trips containing a single sighting, some of these features were highly correlated. We therefore, chose to remove three of the features represented in Table~\ref{t:features}: \emph{Average Sightings}, \emph{Average Distinct Routes} and \emph{Average Hour Difference}, to avoid the obfuscation of the natural clustering ~\cite{Kmeans}. Furthermore we considered that a trip of degree one has no destination (which explains values of average distinct destination below one) and we filtered all instances of vehicles where the total number of trips is lower than 3, resulting in 642,006 unique vehicles.
 
-Clustering of vehicles was performed using the Hartigan and Wong \emph{k-means} algorithm, for each value of $\Tau$. The number of clusters \emph{k} was varied between 2 and 8 and executed with a maximum of 200 iterations and 100 different starting states of the algorithm. The Calinski-Harabasz criterion is used to determine the best value of $k$, the one that minimises the within-cluster and between-cluster errors and provides the more natural clusters ~\cite{Kmeans}. The results of trip clustering are presented and discussed in the next section.
+Clustering of vehicles was performed using the Hartigan and Wong \emph{k-means} algorithm, for each value of $\Tau$. The number of clusters \emph{k} was varied between 2 and 8 and executed with a maximum of 200 iterations and 100 different starting states of the algorithm. The Calinski-Harabasz criterion is used to determine the best value of $k$. It minimises and maximises the within-cluster and between-cluster sum of squares respectively, resulting in more natural clusters ~\cite{Kmeans}. The results of trip clustering are presented and discussed in the next section.
 
 \section{Results and Discussion}\label{s.results}
 
-Table~\ref{t:tau_comparison} provides a summary of multiple runs of \emph{k-means}. For each value of $\Tau$, the optimal number of clusters is selected by picking the value of $k$ that maximises the Calinski-Harabasz criterion. Furthermore, the measures of inter-cluster (betweeness) and intra-cluster (withiness) are depicted relative to the corresponding total sum of squares (total betweeness and total withiness). It is noteworthy that the best value of $k$ increases inversely to $\Tau$. Although a higher value of $k$ seems to suggest that trips with smaller values of $\Tau$ are better able to capture the variance of trip data, we have to consider that varying $\Tau$ affects the average trip degree in the same direction whilst affecting the total number of trips in the opposite direction (table~\ref{t:trips-tau}).
+Table~\ref{t:tau_comparison} provides a summary of multiple runs of \emph{k-means}. For each value of $\Tau$, the optimal number of clusters is selected by picking the value of $k$ that maximises the Calinski-Harabasz criterion. Furthermore, the measures of inter-cluster (betweeness) and intra-cluster (withiness) are depicted relative to the corresponding total sum of squares (total betweeness and total withiness). It is noteworthy that the best value of $k$ increases inversely to $\Tau$. Although a higher value of $k$ seems to suggest that trips with smaller values of $\Tau$ are better able to capture the variance of trip data, we have to consider that varying $\Tau$ affects the average trip degree in the same direction whilst affecting the total number of trips in the opposite direction (Table~\ref{t:trips-tau}).
 
 %This in turn, may enable trip modes to be estimated
 %However, due to its limited coverage of the road network, it is not clear how well ANPR data can capture much the travel characteristics necessary to accurately describe the different groups.
 
 Table~\ref{t:kmeans_centers_300} depicts the cluster centres for the combination of $\Tau$ and $k$ that maximises the Calinski-Harabasz criterion. These results partially meet our expectations. For instance, we were expecting to find a relatively small cluster representing taxis with a high average number of trips per day, occurring over a variety of origins and destinations and over a large time frame. Clusters 5, 6 and 7 do indeed fit this profile. What differentiates cluster 5 from 6 is the particularly high number of average trips per day. When $k$ is equal to 7 these two clusters merge into one. To some extent, other categories fit this profile as well, namely buses, lorries and delivery trucks. However, we could expect buses to show less diversity in the number of origins and destination as these essentially do multiple runs of the same route throughout the day. Still, this can be explained by the fact that buses take routes through main and secondary roads. As most cameras are placed in main roads, the one long bus trip can be perceived as multiple small trips as the bus alternates between arterial and main roads. This is in fact, one of the downsides of ANPR data and the methodology presented in section~\ref{s.trips}.
 
-On the other hand, we expected to observe a group representing home to work commuters with the first trip of the day starting approximately at eight in the morning and a second trip terminating between five and six in the evening. Although we observe one or two groups with those characteristics, these contain a higher average of trips per day than expected, which may represent for example work to school trips. However, we observe at least one big group of trips occurring mostly during lunch hour. A big contributing factor however is the fact that a high proportion of trips contains only a single sighting (table~\ref{t:trips-tau}). It may be the case that many of these drivers choose routes other than those going through ANPR cameras.
+On the other hand, we expected to observe a group representing home to work commuters with the first trip of the day starting approximately at eight in the morning and a second trip terminating between five and six in the evening. Although we observe one or two groups with those characteristics, these contain a higher average of trips per day than expected, which may represent for example work to school trips. However, we observe at least one big group of trips occurring mostly during lunch hour. A big contributing factor however is the fact that a high proportion of trips contains only a single sighting (Table~\ref{t:trips-tau}). It may be the case that many of these drivers choose routes other than those going through ANPR cameras.
 
-To improve the interpretability of these results, we've gain access to a database that outputs the vehicle's weight, wheelplane, make and category from the corresponding plate number. Broadly speaking, vehicle categories are defined relative to the transport of persons or goods, and sub-categories are given according to maximum allowed mass. With this information we sorted vehicles in the ANPR database into one of the following classes: \textit{Bus, Car, Motorcycle, Truck, Van}. Unfortunately, we were unable to identify taxis and therefore were unable to separate private cars from taxis. Table~\ref{t:} shows the mean relative frequency of these classes, and the corresponding deviation for the clusters shown in table~\ref{t:kmeans_centers_300}. Only the clusters showing more notable deviations from the mean are shown. Cluster 5, in particular is mainly composed by trucks. Cluster 6, sees an increase of frequency of cars which may represent taxis. Vans are seen in larger proportions in Cluster 7 and 3. These results provide some evidence in favor of some of our assumptions above and demonstrate that whilst ANPR data is able to capture some of the travel patterns, a clear and robust assessment of travel patterns is still not possible. Furthermore, it is not clear whether this is due to limited coverage of the road network or to a lack of methods that model, quantify and address the uncertainty of trips identified from ANPR data.
-
+To improve the interpretability of these results, we would like to gain access to a governmental database that provides vehicles' weight, wheelplane, make and category from the corresponding plate number. Broadly speaking, vehicle categories are defined relative to the transport of persons or goods, and sub-categories are given according to maximum allowed mass. With this information it would be possible to sort vehicles in the ANPR database into one of the following classes: \textit{Bus, Car, Motorcycle, Truck, Van}. Even though taxis cannot be identified in this way, taxi companies could be contacted directly to obtain this data. However, such databases are available for law enforcement, but not to the public for ethical and privacy reasons. Additionally, this would require us to de-anonymize the hashed number plates. Nevertheless, these results demonstrate that whilst ANPR data is able to capture some of the travel patterns, a clearer and more robust assessment of travel patterns is needed. Furthermore, it is not clear whether this is due to limited coverage of the ANPR cameras in the road network or of the methodology used.
 
 %Several interpretations are possible but further work is needed to provide a more consistent interpretation and validation of these results.  The lack of baselines and validation data is hence one of the shortcomings of this study. An additional pitfall of this methodology is that it is unable to evaluate the reliability of extracted trips.
 
@@ -56,9 +58,9 @@ To improve the interpretability of these results, we've gain access to a databas
 \tabcolsep=0.17cm
 \begin{tabular}{c c c c c}
   \hline
-Tau & Best $k$ & Betweenss & \thead{Average\\Withinss} & \thead{Calinski-\\Harabasz} \\
+$\Tau$ & Best $k$ & Betweenss & \thead{Average\\Withinss} & \thead{Calinski-\\Harabasz} \\
   \hline
-5 min &   8 & 0.923 & 0.125 & 1,116,962 \\
+5 min &   8 & 0.923 & 0.125 & \textbf{1,116,962} \\
   7.5 min &   7 & 0.904 & 0.143 & 1,003,744 \\
   10 min&   7 & 0.896 & 0.143 &   911,044 \\
   15 min &   6 & 0.865 & 0.167 &   794,557 \\
