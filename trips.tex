@@ -1,7 +1,5 @@
 % !TEX root = paper.tex
-\section{Trip Identification}\label{s.trips}
-
-In this section we explain our technique for identifying which sets of sightings can be combined in order to make a trip.
+\subsection{Trip identification}\label{s.trips}
 
 Let the $i_{th}$ sighting of vehicle \emph{k} be defined as the unordered pair:
 \begin{equation} \label{e.sighting}
@@ -13,28 +11,32 @@ Let an ordered sequence of sightings of vehicle \emph{k} define the $u_{th}$ tri
 \begin{equation} \label{e.trip}
 w^{k}_{u} = \left(s^{k}_{(1)}, s^{k}_{(2)}, \dots , s^{k}_{(n)}\right),
 \end{equation}
-where \( n \) is the length of the trip, i.e.\ the number of sightings. Moreover, let the corresponding journey time sequence, of length \(n-1\), be defined as the time difference of consecutive sightings:
+where \( n \) is the degree of the trip, i.e.\ the number of sightings. Moreover, let the corresponding journey time sequence, of degree \(n-1\), be defined as the time difference of consecutive sightings:
 \begin{equation} \label{e.journeytime}
-jt^{k}_{u} = \left(t^{k}_{(1)} - t^{k}_{(2)}, \ldots, t^{k}_{(n)} - t^{k}_{(n-1)} \right).
+jt^{k}_{u} = \left(t^{k}_{(2)} - t^{k}_{(1)}, \ldots, t^{k}_{(n)} - t^{k}_{(n-1)} \right).
 \end{equation}
-We consider a trip of \emph{$w^k_u$} valid if the following conditions hold:
+We consider a trip of \emph{$w^k_u$} valid under the following conditions:
 \begin{align}
 n &\ge 1 , \label{e.trip.constraints.1} \\
-\tau_{(i)} &< jt^{k}_{u(i)} < \Tau_{(i)} \ , \ \forall i \in jt^{k}_{u(i)} \label{e.trip.constraints.2},
+\tau &< jt^{k}_{u(i)} < \Tau \ , \ \forall i \in \{0, 1 ,\ldots, n-1\} \label{e.trip.constraints.2},
 \end{align}
-where $\tau_{(i)}$ and $\Tau_{(i)}$ are the lower and upper bound of the $i_{th}$ element of the journey time sequence.
+where $\tau$ and $\Tau$ are the lower and upper bound of the $i_{th}$ element of the journey time sequence.
 
-The first condition~\ref{e.trip.constraints.1} is straightforward and specifies that every trip should have at least one sighting. We acknowledge that thrips do exist which pass no ANPR cameras, and would thus have a value of $n$ equal to zero. However, for the purposes of the work here we cannot analyse such trips. The second condition~\ref{e.trip.constraints.2} defines a minimum and maximum travel times between consecutive observations. Its purpose is twofold:
+\textit{Condition~\ref{e.trip.constraints.1}} is straightforward and specifies that every identified trip should have at least one sighting. Obviously, vehicles can make trips that do not pass through any ANPR cameras and thus have no associated sightings: $n = 0$. However, this work focus on trips that we can observe and hence we consider that $n > 0$.
+
+\textit{Condition~\ref{e.trip.constraints.2}} defines a minimum and maximum travel times between consecutive observations. Its purpose is twofold:
 \begin{enumerate*}[label=(\roman*)]
-  \item first, to allow separate trips made by the same vehicle to be differentiated. For instance, given two consecutive sightings of \emph{k} three hours apart, we would want to interpret them as belonging to different trips of \emph{k};
+  \item first, to allow distinct trips made by the same vehicle to be differentiated. For instance, given two consecutive sightings of \emph{k} three hours apart, we are likely to want to interpret them as belonging to different trips of \emph{k};
   \item second, it allows implausible trips to be identified. For example, an implausible trip can result from observing \emph{k} at a given camera and then a few seconds later at a second camera, several miles apart. Two explanations are common, either one of the cameras made a detection error, or there is another vehicle with a cloned number-plate travelling on the road network.
-\end{enumerate*} Evidently, condition~\ref{e.trip.constraints.2} is only valid for trips of length two sightings or greater. Nevertheless, trips can easily be differentiated by first sorting sightings by time of occurrence, then calculating the journey time sequence for the entire sequence and finally comparing each element against $\Tau$. An example of a trip identified this way can be seen in Figure~\ref{fig:trip-example}.
+\end{enumerate*} Evidently, Condition~\ref{e.trip.constraints.2} is only valid for trips of degree two sightings or greater. Nevertheless, trips can easily be differentiated by first sorting sightings by time of occurrence, then calculating the journey time sequence for the entire sequence and finally comparing each element against $\Tau$. An example of a trip identified this way can be seen in Figure~\ref{fig:trip-example}.
+
+The simplest approach to choosing the value of $\Tau$ is to pick a fixed empirical value, such as 5 or 10 minutes. However, if the distance between two cameras is greater than another pair of cameras, then it makes sense that $\Tau$ is relaxed. Similarly, if there is an anomaly in the road network, such as a traffic jam, and the routes connecting the two cameras are affected, then the value of $\Tau$ should also be adapted. Hence, $\Tau$ should be a function of the distance between the two cameras (or, more accurately, of the top n-routes between these) and the distribution of observed journey times. The same rationale can be applied to $\tau$. However, we focus on $\Tau$ and leave $\tau$ for analysis at a later stage. Figure~\ref{fig:length-dist} shows how the number of trips per degree of trip varies by fixing $\Tau$ at different empirical values.
 
 \begin{figure}[t]
   \centering
   \includegraphics[width=1\linewidth]{length-dist.pdf}
-  \caption{Distribution of trips per length of trip.}
-  \label{fig:length-dist}  
+  \caption{Distribution of trips per degree of trip.}
+  \label{fig:length-dist}
 \end{figure}
 
 \begin{figure*}[!ht]%
@@ -60,17 +62,15 @@ The first condition~\ref{e.trip.constraints.1} is straightforward and specifies 
     \includegraphics[width=1\linewidth]{trip-example.pdf}
     \label{fig:trip-example-map}
   \end{subfigure}\hfill
-  \caption{Example of a trip of length 4. On the left side the corresponding data table is shown. The $u_{th}$ trip of each vehicle is given by the variable \emph{Trip}, whereas the $i_{th}$ sighting is given by variable \emph{Sighting}. The variable \emph{JourneyTime} gives the travel time from the previous to current sighting. Lastly, the variable \emph{TripId} represents the unique sequence of cameras that describes the trip. This allows trips to be grouped and summarised not only in terms of their origins and destination, but also routes. On the right side, the same trip is plotted on a map. However, the lines do not represent the true route taken by the vehicle, but instead the fastest driving route between sightings. Even though no routing information is available for each consecutive pair of sightings, the observed journey times can be compared against the distribution of collective journey times to rank the set of most likely routes chosen (which can be determined for instance by Stochastic User Equilibrium~\cite{Castillo2008}).}%
+  \caption{Example of a trip of degree 4. On the left side the corresponding data table is shown. The $u_{th}$ trip of each vehicle is given by the variable \emph{Trip}, whereas the $i_{th}$ sighting is given by variable \emph{Sighting}. The variable \emph{JourneyTime} gives the travel time from the previous to current sighting. Lastly, the variable \emph{TripId} represents the unique sequence of cameras that describes the trip. This allows trips to be grouped and summarised not only in terms of their origins and destination, but also routes. On the right side, the same trip is plotted on a map. The circles represent camera locations whereas the lines represent the fastest driving routes between sightings rather than the true route taken by the vehicle. Even though no routing information is available for each consecutive pair of sightings, the observed journey times can be compared against the distribution of collective journey times to rank the set of most likely routes chosen (which can be determined for instance by Stochastic User Equilibrium~\cite{Castillo2008}).}%
   \label{fig:trip-example}%
+  \vspace{-0.40cm}
 \end{figure*}
 
-The simplest approach to choosing the value of $\Tau$ is to pick a fixed empirical value, such as 5 or 10 minutes. However, if the distance between two cameras is greater than another pair of cameras, then it makes sense that $\Tau$ is relaxed. Similarly, if there is an anomaly in the road network, such as a traffic jam, and the routes connecting the two cameras are affected, then the value of $\Tau$ should also be adapted. Hence, $\Tau$ should be a function of the distance between the two cameras (or, more accurately, of the top n-routes between these) and the distribution of observed journey times. The same rationale can be applied to $\tau$.
 
-On the other hand, a consistent set of models and methodologies for estimating $\Tau$ and $\tau$, under a variety of circumstances and road anomalies, remains an open research problem. Thus, for the purposes of this work, we will consider these parameters to be fixed. Nevertheless, the importance of estimating these parameters should not be understated. Any errors in trip identification that occur due to poor estimation and filtering methods will propagate and will be amplified in posterior analysis done using trip data. Therefore, $\Tau$ and $\tau$ estimation is something that needs to be carefully addressed and studied in the future in order to fully understand its impact in the outcome of the research. To briefly exemplify this, figure~\ref{fig:length-dist} shows how the number of trips per length of trip varies by fixing $\Tau$ at different empirical values ($\tau$ is ignored).
+\subsection{Duplicate scannings}\label{s.duplicates}
 
-\subsection{Duplicate scannings}
-
-We need to ensure that every trip of vehicle \emph{k} is unique from all other trips of vehicle \emph{k}. I.e. given $W^k$ the set of all valid trips of $k$:
+We need to ensure that every trip of vehicle \emph{k} is unique from all other trips of vehicle \emph{k}. That is, given $W^k$ the set of all valid trips of $k$:
 
 \begin{align}
 W^{k} = \left( w^{k}_{(1)}, w^{k}_{(2)}, \ldots, w^{k}_{(N)} \right) \label{e.trip.history},
@@ -78,16 +78,22 @@ W^{k} = \left( w^{k}_{(1)}, w^{k}_{(2)}, \ldots, w^{k}_{(N)} \right) \label{e.tr
 
 where \emph{N} is the number of trips of \emph{k}, then there should be no two trips containing the same sighting:
 
+\vspace{-0.5cm}
 \begin{align}
 s^{k}_{(u,i)} \neq s^{k}_{(v,j)}, \forall u,v &= 1, 2, \ldots, N \ , \ u \neq v,  \label{e.trip.history.constraint} \\
-\forall i,j &= 1, 2, \ldots, n^u \ ,\nonumber \\
-\forall i,j &= 1, 2, \ldots, n^v \ , \nonumber
+\forall i &= 1, 2, \ldots, n^u \ , \\
+\forall j &= 1, 2, \ldots, n^v \  \nonumber
 \end{align}
-where $s_{(u,i)}^k$ is the $i^{th}$ sighting of vehicle $k$ during trip $u$, and $n^u$ is the number of sightings in trip $u$.
+where $s_{(u,i)}^k$ is the $i^{th}$ sighting of the $u^{th}$ trip of vehicle $k$, and $n^u$ is the degree of $u$.
 
-However, ANPR can identify the same vehicle multiple times in the same run, if for instance the vehicle is stopped at a junction or traffic light. Hence, if two sightings occurred at the same location in a very short period of time, then there is a strong possibility that these are duplicate observations. As a simplification, we can assume that a trip should not contain cycles and that no camera should appear twice in the same trip. Yet, this assumption ignores cases where a vehicle is required to correct its route by passing through the same location as one previously observed in the same trip. Thus, we affirm that two sightings of vehicle \emph{k} are different if they were observed at two different points in time at different locations, or, if observed at the same location, then the time interval must be greater than a parameter $\gamma$, otherwise the two sightings are deemed as duplicates:
+In fact, ANPR cameras can identify the same vehicle multiple times in the same pass, if for instance the vehicle is stopped at a junction or traffic light. Hence, if two sightings occurred at the same location in a very short period of time, then there is a strong possibility that these are duplicate observations. As a simplification, we can assume that a trip should not contain cycles and that no camera should appear twice in the same trip. Yet, this assumption ignores cases where a vehicle is required to correct its route by passing through cameras that have already been registered in that trip. Thus, two sightings of vehicle \emph{k} are different if they were observed:
+\begin{enumerate*}[label=(\roman*)]
+  \item at two different points in time at different locations;
+  \item or at the same location with a time interval greater than $\gamma$.
+\end{enumerate*}
+Otherwise the two sightings are deemed as duplicates:
 
-
+\vspace{-0.5cm}
 \begin{align} \label{e.sighting.different.2}
  (\ c^{k}_{i} &\ne c^{k}_{j} \, )\ \vee \\
  (\ c^{k}_{i} &= c^{k}_{j} \wedge |t^{k}_{i} - t^{k}_{j}| < \gamma \, )\ \Rightarrow s^{k}_{i} \ne s^{k}_{j}  \ , \ i \ne j \nonumber
@@ -95,13 +101,27 @@ However, ANPR can identify the same vehicle multiple times in the same run, if f
 
 where $c_i^k$ and $t_i^k$ are the camera and timestamp of the $i_{th}$ sighting of vehicle $k$.
 
- Although the estimation of $\gamma$ carries similar considerations and consequences as those of estimating $\Tau$ and $\tau$, most duplicates can be identified in consecutive sightings of the same camera within the same trip. Even though a poor estimation of $\gamma$ also has an impact on error propagation, this decreases substantially after filtering duplicates according to the heuristic above, due to the low occurrence of cycles in trips. Nevertheless, this issue needs to be fully investigated in future works.
+ Although the estimation of $\gamma$ carries similar considerations and consequences as those of estimating $\Tau$ and $\tau$, most duplicates can be identified in consecutive sightings of the same camera within the same trip. Even though a poor estimation of $\gamma$ also has an impact on error propagation, this decreases substantially after filtering duplicates according to the heuristic above, due to the low occurrence of cycles in trips.
 
-\subsection{Errors in plate scanning}
+\subsection{Errors in plate scanning}\label{s.errors}
 
-Number plate recognition cameras have accuracy rates of 99.9\% or higher. If we consider that on average 1 to 10 out of 10000 scans are misclassified number-plates then approximately 200 to 2000 scans everyday are incorrect. We categorise the errors made by ANPR cameras into two types:
-\begin{enumerate*}[label=(\roman*)]
-  \item a passing vehicle is not detected by the camera;
-  \item a different vehicle is detected instead.
-\end{enumerate*}
-In the first case, there is no observed data. The corresponding trip sequence for the affected vehicle will be missing a sighting but we will have no indication of this. It should be noted that this could also happen in the case where a vehicle does not take the `normal' route and pass this intermediary camera. For the second case, there is a recorded sighting, but this will be assigned to the incorrect vehicle. Even though, the camera provides a value of \emph{confidence} which helps in diagnosing incorrect scans, errors still occur for high values of confidence. Even so, in this work we do not present a complex solution for this issue. Methods to detect and address these two types of errors need to be designed and implemented in the future.
+ANPR cameras have an average accuracy rate of 99.9\% or higher. If we consider that on average 1 to 10 out of 10000 number plate scans are misclassified number-plates then approximately between 200 to 2000 scans everyday are incorrect. These errors propagate and lead to innacuracies in the identification of trips. In fact, misclassifications affect the trip sequences of two vehicles: the true passing vehicle and the vehicle erroneously detected instead. The true vehicle will be missing a sighting in the correspoding trip sequence vector whereas the other vehicle's trip sequence will contain an extra invalid sighting. The later may be more easily detected and removed than the former as it may generate a sighting for a vehicle that is normally seen in a different part of the country.
+
+\begin{table*}[t]
+\centering
+\begin{tabular}{c c c c c c c c c c c}
+  \hline
+ \thead{Total\\Trips} & \thead{Average\\Trips} & \thead{Average\\Degree} & \thead{Average\\Sightings} & \thead{Average\\Distinct\\Origins} & \thead{Average\\Distinct\\Destinations} & \thead{Average\\Distinct\\Routes} & \thead{Average\\First\\Hour} & \thead{Average\\Last\\Hour} & \thead{Average\\Hour\\Difference} & \thead{Average\\Rest\\Time} \\
+  \hline
+41 & 3.42 & 1.25 & 5.75 & 2.75 & 1.00 & 3.00 & 15.33 & 19.25 & 3.80 & 3.70 \\
+3 & 1.50 & 1.00 & 1.50 & 1.50 & 0.00 & 1.50 & 14.00 & 14.50 & 0.73 & 0.73 \\
+7 & 2.33 & 1.33 & 3.33 & 2.33 & 0.67 & 2.33 & 11.00 & 13.00 & 2.44 & 2.41 \\
+12 & 2.40 & 1.10 & 3.60 & 2.40 & 0.60 & 2.40 & 14.40 & 16.40 & 2.00 & 1.95 \\
+   \hline
+\end{tabular}
+\caption{Sample of extracted features from trips taken from 15 weekdays of number plate data.}
+\vspace{-0.2cm}
+\label{t:features}
+\end{table*}
+
+Moreover, ANPR cameras may exceptionally fail to detect passing vehicles. Even though only the passing vehicle is affected in this case, it's trip sequence vector is nonetheless affected. Therefore, due to their impact in trip identification, it is important to detect and address missing and misclassified scans. We filter invalid sightings by removing all sightings containing a \emph{confidence} value below $85\%$. However, we do not address missing scans in this work.
